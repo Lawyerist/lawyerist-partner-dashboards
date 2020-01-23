@@ -1,9 +1,9 @@
 <?php
 
 /*
-Plugin Name: Lawyerist Partner Dashboard
+Plugin Name: Lawyerist Partner Dashboards
 Plugin URI: https://lawyerist.com
-Description: Enhanced functionality for the Small Firm Scorecard.
+Description: Performance dashboards for Lawyerist's advertising partners.
 Author: Sam Glover
 Version: 0.1.0
 Author URI: https://lawyerist.com

@@ -13,13 +13,11 @@ function remove_meta_boxes() {
     'wp-review-metabox-desc',
     'wp-review-metabox-reviewLinks',
     'wp-review-metabox-userReview',
-    'wpseo_meta',
+    // 'wpseo_meta',
   );
 
   foreach ( $metaboxes_to_remove as $metabox ) {
-
     remove_meta_box( $metabox, 'partner', 'normal' );
-
   }
 
 }

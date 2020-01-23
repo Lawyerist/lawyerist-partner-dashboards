@@ -1,0 +1,103 @@
+/*------------------------------
+Index
+
+Layout
+Dashboard Title
+
+------------------------------*/
+
+/* Layout */
+.partner-dashboard {
+  font-family: concourse, sans-serif;
+  font-size: 10px;
+}
+
+.partner-dashboard #column_container {
+  display: block;
+}
+
+.partner-dashboard #content_column > *:last-child {
+  margin-bottom: 6rem;
+}
+
+
+/* Dashboard Title */
+#partner-dashboard-title {
+    display: grid;
+    grid-template-columns: 10rem auto;
+    grid-column-gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+    #partner-dashboard-title div[itemprop="image"] {
+      background-color: #ddd;
+      border-radius: .2rem;
+      box-sizing: border-box;
+      height: 10rem;
+      margin: 0 1rem 0 0;
+      padding: .5rem;
+      width: 10rem;
+    }
+
+      #partner-dashboard-title img.wp-post-image {
+        height: 100%;
+        margin: auto 0;
+        max-width: none;
+        width: auto;
+      }
+
+    #partner-dashboard-title h1 {
+      align-self: center;
+      font-size: 6.3rem;
+      margin-bottom: 0;
+    }
+
+      @media only screen and ( max-width: 499px ) {
+
+        #partner-dashboard-title h1 {
+          font-size: 4.2rem;
+        }
+
+      }
+
+#authorized-users {
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+  @media only screen and ( max-width: 549px ) {
+
+    #authorized-users {
+      grid-template-columns: 1fr;
+    }
+
+  }
+
+  #authorized-users .authorized-user {
+    display: grid;
+    grid-column-gap: 1.5rem;
+    grid-template-columns: minmax( 5rem, 9rem ) 1fr;
+  }
+
+    #authorized-users .user-details {
+      align-self: center;
+    }
+
+      #authorized-users .user-name {
+        font-size: 1.8rem;
+      }
+
+      #authorized-users .user-email {
+        color: #777;
+        font-size: 1.4rem;
+      }
+
+/* Cards */
+.partner-dashboard .card {
+  padding: 2rem;
+}
+
+.partner-dashboard .card .card-label {
+  margin-bottom: 1em;
+}
