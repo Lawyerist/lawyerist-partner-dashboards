@@ -23,7 +23,10 @@
           <div itemprop="image"><?php the_post_thumbnail( 'thumbnail' ); ?></div>
         <?php } ?>
 
-        <h1 class="partner"><?php echo $partner; ?> Dashboard</h1>
+				<div class="title-container">
+					<h1 class="title"><?php echo $partner; ?></h1>
+					<p class="subtitle">Performance Dashboard</p>
+				</div>
 
       </div>
 

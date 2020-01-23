@@ -46,18 +46,19 @@ Dashboard Title
         width: auto;
       }
 
-    #partner-dashboard-title h1 {
+    #partner-dashboard-title .title-container {
       align-self: center;
-      font-size: 6.3rem;
-      margin-bottom: 0;
     }
 
-      @media only screen and ( max-width: 499px ) {
+      #partner-dashboard-title .title {
+        margin-bottom: 0;
+      }
 
-        #partner-dashboard-title h1 {
-          font-size: 4.2rem;
-        }
-
+      #partner-dashboard-title .subtitle {
+        color: #777;
+        font-size: 1.8rem;
+        margin-bottom: 0;
+        text-transform: uppercase;
       }
 
 #authorized-users {
