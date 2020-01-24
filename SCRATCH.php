@@ -1,43 +1,39 @@
-<?php
+// Start the Loop.
+if ( have_posts() ) : while ( have_posts() ) : the_post();
 
-/**
-* Adds .partner-dashboard to <body>.
-*/
-function lpd_body_class( $classes ) {
+  // Assign post variables.
+  $partner    = the_title( '', '', FALSE );
+  $partner_id = get_the_ID();
 
-	if ( is_singular( 'partner' ) ) {
-    $classes[] = 'partner-dashboard';
-	}
+?>
 
-  return $classes;
+  <div id="partner-dashboard-title">
 
-}
+    <?php if ( has_post_thumbnail() ) { ?>
+      <div itemprop="image"><?php the_post_thumbnail( 'thumbnail' ); ?></div>
+    <?php } ?>
 
-add_filter( 'body_class', 'lpd_body_class' );
+    <div class="title-container">
+      <h1 class="title"><?php echo $partner; ?></h1>
+      <p class="subtitle">Performance Dashboard</p>
+    </div>
 
+  </div>
 
-/**
-* Selects the partner dashboard single post template.
-*/
-function lpd_template( $template ) {
+  <div class="card">
+    <div class="card-label">Product Rating</div>
+    <div id="product-rating"></div>
+  </div>
 
-  if ( is_singular( 'partner' ) && locate_template( array( 'single-partner.php' ) ) !== $template ) {
-      $template = plugin_dir_path( __FILE__ ) . 'partner-dashboard-template.php';
-  }
+  <div class="card">
+    <div class="card-label">Authorized Users</div>
+    <div id="authorized-users">
+      <?php echo lpd_list_authorized_users(); ?>
+    </div>
+  </div>
 
-  return $template;
+<?php endwhile; endif; ?>
 
-}
-
-add_filter( 'template_include', 'lpd_template' );
-
-
-/**
-* Gets the product rating and information about the rating.
-*/
-function lpd_product_rating( $page_id ) {
-
-}
 
 /**
 * Gets a list of authorized users.

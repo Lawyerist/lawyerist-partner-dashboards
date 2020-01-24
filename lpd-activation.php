@@ -10,6 +10,7 @@ function lpd_install() {
 
 register_activation_hook( __FILE__ . '/lawyerist-partner-dashboards.php', 'lpd_install' );
 
+
 // Register Custom Post Type
 function partner_post_type() {
 
@@ -77,10 +78,11 @@ function check_for_partner_dashboard_page() {
 	if ( get_page_by_title( 'Partner Dashboard' ) == null ) {
 
 		$createPage = array(
-			'post_title'    => 'Partner Dashboard',
+      'post_author'   => 1,
+      'post_name'     => 'partner-dashboard',
 			'post_status'   => 'publish',
+      'post_title'    => 'Partner Dashboard',
 			'post_type'     => 'page',
-			'post_name'     => 'partner-dashboard',
 		);
 
 		// Insert the post into the database

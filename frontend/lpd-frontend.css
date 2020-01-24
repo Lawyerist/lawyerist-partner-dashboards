@@ -1,0 +1,164 @@
+/*------------------------------
+Index
+
+Layout
+Dashboard Title
+
+------------------------------*/
+
+/* Fonts */
+.partner-dashboard .card,
+.partner-dashboard .subtitle,
+.partner-dashboard .nodata-message {
+  font-family: concourse, sans-serif;
+}
+
+
+/* Layout */
+.partner-dashboard {
+  font-size: 10px;
+}
+
+.partner-dashboard #column_container {
+  display: block;
+}
+
+.partner-dashboard #content_column > *:last-child {
+  margin-bottom: 6rem;
+}
+
+/* Cards */
+.partner-dashboard .card {
+  padding: 2rem;
+}
+
+.partner-dashboard .card .card-label {
+  margin-bottom: 1em;
+}
+
+.partner-dashboard .nodata-message,
+.partner-dashboard .card .report-label {
+  color: #555;
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+
+.partner-dashboard .card .report-number {
+  font-size: 6.3rem;
+}
+
+.partner-dashboard .card .report-label-detail {
+  color: #777;
+  font-size: 1.2rem;
+  line-height: 1.1;
+}
+
+
+/* Dashboard Login Form */
+#lpd-login {
+  margin: 4rem auto;
+  max-width: 32rem;
+}
+
+#lpd-login p {
+  margin-bottom: 1rem;
+}
+
+#lpd-login p.login-remember {
+  margin-bottom: 1.5rem;
+}
+
+#lpd-login label,
+#lpd-login .login-lost-password {
+  font-size: 1.6rem;
+}
+
+#lpd-login .login-username input,
+#lpd-login .login-password input,
+#lpd-login .login-submit input {
+  width: 100%;
+}
+
+#lpd-login input#wp-submit {
+  margin-bottom: 0;
+}
+
+
+/* Dashboard Title */
+#lpd-title {
+    display: grid;
+    grid-template-columns: 10rem auto;
+    grid-column-gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+    #lpd-title div[itemprop="image"] {
+      background-color: #ddd;
+      border-radius: .2rem;
+      box-sizing: border-box;
+      height: 10rem;
+      margin: 0 1rem 0 0;
+      padding: .5rem;
+      width: 10rem;
+    }
+
+      #lpd-title img.wp-post-image {
+        height: 100%;
+        margin: auto 0;
+        max-width: none;
+        width: auto;
+      }
+
+    #lpd-title .title-container {
+      align-self: center;
+    }
+
+      #lpd-title .title {
+        margin-bottom: 0;
+      }
+
+      #lpd-title .subtitle {
+        color: #777;
+        font-size: 1.8rem;
+        margin-bottom: 0;
+        text-transform: uppercase;
+      }
+
+.cols-4 {
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: repeat( 4, 1fr);
+}
+
+.cols-2 {
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: repeat( 2, 1fr );
+}
+
+  @media only screen and ( max-width: 549px ) {
+
+    .cols-2 {
+      grid-template-columns: 1fr;
+    }
+
+  }
+
+  #lpd-authorized-users .authorized-user {
+    display: grid;
+    grid-column-gap: 1.5rem;
+    grid-template-columns: minmax( 5rem, 9rem ) 1fr;
+  }
+
+    #lpd-authorized-users .user-details {
+      align-self: center;
+    }
+
+      #authorized-users .user-name {
+        font-size: 1.8rem;
+      }
+
+      #lpd-authorized-users .user-email {
+        color: #777;
+        font-size: 1.4rem;
+      }

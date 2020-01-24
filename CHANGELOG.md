@@ -13,4 +13,6 @@ All notable changes to this project will be documented in this file. The format 
 - Create a Partner Dashboards page if it doesn't already exist.
 - Partner dashboard template.
   - Logo and title.
+  - Product page card.
+    - Trial button clicks.
   - Authorized user card.
