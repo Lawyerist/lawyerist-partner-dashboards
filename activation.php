@@ -1,5 +1,15 @@
 <?php
 
+function lpd_install() {
+
+    partner_post_type();
+		check_for_partner_dashboard_page();
+    flush_rewrite_rules();
+
+}
+
+register_activation_hook( __FILE__ . '/lawyerist-partner-dashboards.php', 'lpd_install' );
+
 // Register Custom Post Type
 function partner_post_type() {
 
@@ -49,7 +59,7 @@ function partner_post_type() {
 		'can_export'            => true,
 		'has_archive'           => false,
 		'exclude_from_search'   => true,
-		'publicly_queryable'    => true,
+		'publicly_queryable'    => false,
 		'capability_type'       => 'page',
 		'show_in_rest'          => false,
 	);
@@ -59,3 +69,25 @@ function partner_post_type() {
 }
 
 add_action( 'init', 'partner_post_type', 0 );
+
+
+// Create Partner Dashboards page if it does not already exist.
+function check_for_partner_dashboard_page() {
+
+	if ( get_page_by_title( 'Partner Dashboard' ) == null ) {
+
+		$createPage = array(
+			'post_title'    => 'Partner Dashboard',
+			'post_status'   => 'publish',
+			'post_type'     => 'page',
+			'post_name'     => 'partner-dashboard',
+		);
+
+		// Insert the post into the database
+		wp_insert_post( $createPage );
+
+	}
+
+}
+
+add_action( 'init', 'check_for_partner_dashboard_page' );
