@@ -29,14 +29,14 @@ function lpd_get_dashboard_title( $partner_id, $partner_name ) {
 }
 
 
-function lpd_get_product_page_report( $partner_id ) {
+function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
 
-  $product_page = get_post( get_field( 'product_page', $partner_id ) );
-  $portal       = get_post( $product_page->post_parent );
+  $portal_path          = parse_url( get_permalink( $portal->ID ), PHP_URL_PATH ) ;
+  $product_page_path    = parse_url( get_permalink( $product_page->ID ), PHP_URL_PATH ) ;
 
   $report_data  = array(
-    'portal_views'        => 456,
-    'product_page_views'  => 0,
+    'portal_views'        => lpd_get_pageviews( $portal_path ),
+    'product_page_views'  => lpd_get_pageviews( $product_page_path ),
     'tb_unique_clicks'    => trial_button_click_count( $product_page->ID, 'current', true ),
     'tb_total_clicks'     => trial_button_click_count( $product_page->ID, 'current', false ),
   );
@@ -96,6 +96,126 @@ function lpd_get_product_page_report( $partner_id ) {
 
 
 /**
+* Gets page views from Google Analytics.
+*/
+function lpd_get_pageviews( $page_path ) {
+
+  $analytics = initializeAnalytics();
+  $response = getReport( $analytics, $page_path );
+
+  return number_format ( lpd_get_results( $response ) );
+
+}
+
+function lpd_get_results( $reports ) {
+
+  $report           = $reports[ 0 ];
+  $rows             = $report->getData()->getRows();
+  $row              = $rows[ 0 ];
+  $metrics          = $row->getMetrics();
+  $values           = $metrics[ 0 ]->getValues();
+
+  return $values[ 0 ];
+
+}
+
+/**
+ * Initializes an Analytics Reporting API V4 service object.
+ *
+ * @return An authorized Analytics Reporting API V4 service object.
+ */
+function initializeAnalytics() {
+
+  require_once( plugin_dir_path( __FILE__ ) . 'google-api-php-client-2.4.0/vendor/autoload.php' );
+
+  // Create and configure a new client object.
+  $client = new Google_Client();
+  $client->setApplicationName( "Lawyerist Partner Dashboards" );
+  $client->setAuthConfig( plugin_dir_path( __FILE__ ) . 'angelic-throne-266121-b88841b572e7.json' );
+  $client->setScopes( [ 'https://www.googleapis.com/auth/analytics.readonly' ] );
+  $analytics = new Google_Service_AnalyticsReporting( $client );
+
+  return $analytics;
+
+}
+
+
+/**
+ * Queries the Analytics Reporting API V4.
+ *
+ * @param service An authorized Analytics Reporting API V4 service object.
+ * @return The Analytics Reporting API V4 response.
+ */
+function getReport( $analytics, $page_path ) {
+
+  // Create the DateRange object.
+  $dateRange = new Google_Service_AnalyticsReporting_DateRange();
+  $dateRange->setStartDate( '7daysAgo' );
+  $dateRange->setEndDate( 'today' );
+
+  // Create the Metrics object.
+  $pageviews = new Google_Service_AnalyticsReporting_Metric();
+  $pageviews->setExpression( 'ga:pageviews' );
+  $pageviews->setAlias( 'pageviews' );
+
+  // Create the page path Dimension Filter object.
+  $dimensionFilter = new Google_Service_AnalyticsReporting_DimensionFilter();
+  $dimensionFilter->setDimensionName( 'ga:pagePath' );
+  $dimensionFilter->setOperator( 'BEGINS_WITH' );
+  $dimensionFilter->setExpressions( array( $page_path ) );
+
+  $dimensionFilterClause = new Google_Service_AnalyticsReporting_DimensionFilterClause();
+  $dimensionFilterClause->setFilters( array( $dimensionFilter ) );
+
+  // Create the ReportRequest object.
+  $request = new Google_Service_AnalyticsReporting_ReportRequest();
+  $request->setViewId( get_field( 'google_analytics_view_id', 'option' ) );
+  $request->setDateRanges( $dateRange );
+  $request->setDimensions( array( $dimensionsFilter ) );
+  $request->setDimensionFilterClauses( array( $dimensionFilterClause ) );
+  $request->setMetrics( array( $pageviews ) );
+
+  $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
+  $body->setReportRequests( array( $request) );
+  return $analytics->reports->batchGet( $body );
+
+}
+
+
+/**
+ * Parses and prints the Analytics Reporting API V4 response.
+ *
+ * @param An Analytics Reporting API V4 response.
+ */
+function printResults($reports) {
+  for ( $reportIndex = 0; $reportIndex < count( $reports ); $reportIndex++ ) {
+    $report = $reports[ $reportIndex ];
+    $header = $report->getColumnHeader();
+    $dimensionHeaders = $header->getDimensions();
+    $metricHeaders = $header->getMetricHeader()->getMetricHeaderEntries();
+    $rows = $report->getData()->getRows();
+
+    for ( $rowIndex = 0; $rowIndex < count($rows); $rowIndex++) {
+      $row = $rows[ $rowIndex ];
+      $dimensions = $row->getDimensions();
+      $metrics = $row->getMetrics();
+      for ($i = 0; $i < count($dimensionHeaders) && $i < count($dimensions); $i++) {
+        print($dimensionHeaders[$i] . ": " . $dimensions[$i] . "\n");
+      }
+
+      for ($j = 0; $j < count($metrics); $j++) {
+        $values = $metrics[$j]->getValues();
+        for ($k = 0; $k < count($values); $k++) {
+          $entry = $metricHeaders[$k];
+          print($entry->getName() . ": " . $values[$k] . "\n");
+        }
+      }
+    }
+  }
+}
+
+
+/**
 * Gets a list of authorized users.
 */
 function lpd_get_authorized_users_list( $partner_id ) {
@@ -106,38 +226,38 @@ function lpd_get_authorized_users_list( $partner_id ) {
 
       ob_start();
 
-      ?>
+        ?>
 
-      <div class="card">
-        <div class="card-label">People Authorized to View this Dashboard</div>
-        <div class="cols-2" id="lpd-authorized-users">
-
-          <?php
-
-          foreach ( $authorized_users as $user_id ) {
-
-            $user = get_userdata( $user_id );
-
-            ?>
-
-            <div class="authorized-user">
-              <?php echo get_avatar( $user_id, 90 ); ?>
-              <div class="user-details">
-                <div class="user-name"><?php echo $user->display_name; ?></div>
-                <div class="user-email"><?php echo $user->user_email; ?></div>
-              </div>
-            </div>
+        <div class="card">
+          <div class="card-label">People Authorized to View this Dashboard</div>
+          <div class="cols-2" id="lpd-authorized-users">
 
             <?php
 
-          }
+            foreach ( $authorized_users as $user_id ) {
 
-          ?>
+              $user = get_userdata( $user_id );
 
+              ?>
+
+              <div class="authorized-user">
+                <?php echo get_avatar( $user_id, 90 ); ?>
+                <div class="user-details">
+                  <div class="user-name"><?php echo $user->display_name; ?></div>
+                  <div class="user-email"><?php echo $user->user_email; ?></div>
+                </div>
+              </div>
+
+              <?php
+
+            }
+
+            ?>
+
+          </div>
         </div>
-      </div>
 
-      <?php
+        <?php
 
       return ob_get_clean();
 

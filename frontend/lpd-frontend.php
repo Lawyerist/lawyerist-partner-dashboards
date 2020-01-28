@@ -81,11 +81,14 @@ function lpd_dashboard() {
 
 		} elseif ( count( $dashboards ) == 1 ) {
 
-			$partner = get_post( $dashboards[0] );
+			// Get post objects.
+			$partner			= get_post( $dashboards[0] );
+			$product_page = get_post( get_field( 'product_page', $partner->ID ) );
+		  $portal       = get_post( $product_page->post_parent );
 
 			echo lpd_get_dashboard_title( $partner->ID, $partner->post_title );
 
-			echo lpd_get_product_page_report( $partner->ID );
+			echo lpd_get_product_page_report( $partner->ID, $product_page, $portal );
 
 		  echo lpd_get_authorized_users_list( $partner->ID );
 

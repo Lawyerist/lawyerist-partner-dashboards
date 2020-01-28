@@ -16,7 +16,6 @@ if ( !defined( 'ABSPATH' ) ) exit;
 */
 define( 'LPD_PLUGIN_VERSION', '0.1.0' );
 define( 'LPD_PAGE_SLUG', 'partner-dashboard' );
-// define( 'REST_AUTH_TOKEN', '' );
 
 require_once( plugin_dir_path( __FILE__ ) . 'common/lpd-common.php' );
 
@@ -31,7 +30,6 @@ if ( !is_admin() ) {
 	function lpd_frontend_stylesheet() {
 		wp_enqueue_style( 'lpd-frontend-css', plugins_url( 'frontend/lpd-frontend.css', __FILE__ ) );
 	}
-
 	add_action( 'wp_enqueue_scripts', 'lpd_frontend_stylesheet' );
 
 }

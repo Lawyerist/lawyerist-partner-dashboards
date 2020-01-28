@@ -2,9 +2,11 @@
 
 function lpd_install() {
 
-    partner_post_type();
-		check_for_partner_dashboard_page();
-    flush_rewrite_rules();
+  partner_post_type();
+	check_for_partner_dashboard_page();
+  flush_rewrite_rules();
+
+  update_option( 'lpd_version', LPD_PLUGIN_VERSION );
 
 }
 
