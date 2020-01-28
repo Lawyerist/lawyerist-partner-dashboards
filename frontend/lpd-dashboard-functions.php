@@ -89,7 +89,7 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
           ?>
 
           <div class="report-label">Product Rating</div>
-          <div class="report-number"><?php echo $rating; ?>/5</div>
+          <div class="report-number"><?php echo $rating; ?><span style="color: #777;">/5</span></div>
           <div class="report-label-detail"><?php echo lawyerist_star_rating ( $rating ) . '<a href="' . get_permalink( $product_page->ID ); ?>#rating">(<?php echo $rating_count . ' ' . _n( 'rating', 'ratings', $rating_count ) . '</a>'; ?>)</div>
 
         </div>
