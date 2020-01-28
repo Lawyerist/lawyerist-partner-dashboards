@@ -171,7 +171,6 @@ function getReport( $analytics, $page_path ) {
   $request = new Google_Service_AnalyticsReporting_ReportRequest();
   $request->setViewId( get_field( 'google_analytics_view_id', 'option' ) );
   $request->setDateRanges( $dateRange );
-  $request->setDimensions( array( $dimensionsFilter ) );
   $request->setDimensionFilterClauses( array( $dimensionFilterClause ) );
   $request->setMetrics( array( $pageviews ) );
 
