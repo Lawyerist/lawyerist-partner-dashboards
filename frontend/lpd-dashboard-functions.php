@@ -57,6 +57,7 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
 
     <div class="card">
       <div class="card-label">Product Page</div>
+
       <div class="cols-4" id="lpd-product-page-report">
 
         <div id="product-portal-views">
@@ -71,10 +72,32 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
           <div class="report-label-detail"><a href="<?php echo get_permalink( $product_page->ID ); ?>"><?php echo $product_page->post_title; ?></a></div>
         </div>
 
+        <div id="community-rating">
+
+          <?php
+
+          $our_rating             = lawyerist_get_our_rating( $product_page->ID );
+          $rating                 = lawyerist_get_composite_rating( $product_page->ID );
+          $community_review_count = lawyerist_get_community_review_count( $product_page->ID );
+
+          if ( !empty( $our_rating ) ) {
+            $rating_count = $community_review_count + 1;
+          } else {
+            $rating_count = $community_review_count;
+          }
+
+          ?>
+
+          <div class="report-label">Product Rating</div>
+          <div class="report-number"><?php echo $rating; ?>/5</div>
+          <div class="report-label-detail"><?php echo lawyerist_star_rating ( $rating ) . '<a href="' . get_permalink( $product_page->ID ); ?>#rating">(<?php echo $rating_count . ' ' . _n( 'rating', 'ratings', $rating_count ) . '</a>'; ?>)</div>
+
+        </div>
+
         <div id="trial-button-clicks">
-          <div class="report-label">Trial Button Unique Clicks</div>
+          <div class="report-label">Trial Button Leads</div>
           <div class="report-number"><?php echo $report_data[ 'tb_unique_clicks' ]; ?></div>
-          <div class="report-label-detail"><?php echo $report_data[ 'tb_total_clicks' ]; ?> Total</div>
+          <div class="report-label-detail"><?php echo $report_data[ 'tb_total_clicks' ]; ?> Total Clicks</div>
         </div>
 
         <div id="affinity-benefit-claims">

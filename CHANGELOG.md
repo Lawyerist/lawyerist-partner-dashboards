@@ -17,5 +17,6 @@ All notable changes to this project will be documented in this file. The format 
   - Logo and title.
   - Product page card.
     - Portal and product page views from Google Analytics.
+    - Product rating.
     - Trial button clicks.
   - Authorized user card.
