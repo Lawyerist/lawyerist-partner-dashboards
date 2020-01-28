@@ -182,39 +182,6 @@ function getReport( $analytics, $page_path ) {
 
 
 /**
- * Parses and prints the Analytics Reporting API V4 response.
- *
- * @param An Analytics Reporting API V4 response.
- */
-function printResults($reports) {
-  for ( $reportIndex = 0; $reportIndex < count( $reports ); $reportIndex++ ) {
-    $report = $reports[ $reportIndex ];
-    $header = $report->getColumnHeader();
-    $dimensionHeaders = $header->getDimensions();
-    $metricHeaders = $header->getMetricHeader()->getMetricHeaderEntries();
-    $rows = $report->getData()->getRows();
-
-    for ( $rowIndex = 0; $rowIndex < count($rows); $rowIndex++) {
-      $row = $rows[ $rowIndex ];
-      $dimensions = $row->getDimensions();
-      $metrics = $row->getMetrics();
-      for ($i = 0; $i < count($dimensionHeaders) && $i < count($dimensions); $i++) {
-        print($dimensionHeaders[$i] . ": " . $dimensions[$i] . "\n");
-      }
-
-      for ($j = 0; $j < count($metrics); $j++) {
-        $values = $metrics[$j]->getValues();
-        for ($k = 0; $k < count($values); $k++) {
-          $entry = $metricHeaders[$k];
-          print($entry->getName() . ": " . $values[$k] . "\n");
-        }
-      }
-    }
-  }
-}
-
-
-/**
 * Gets a list of authorized users.
 */
 function lpd_get_authorized_users_list( $partner_id ) {
