@@ -105,11 +105,6 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
 
     <div class="card">
       <div class="card-label">Affinity Benefit Claims</div>
-
-      <div id="affinity-benefit-claims">
-        <div class="report-number"><?php echo lpd_count_affinity_claims( $product_page->ID ); ?></div>
-      </div>
-
       <?php echo lpd_get_affinity_claims( $product_page ); ?>
     </div>
 
@@ -258,7 +253,13 @@ function lpd_get_affinity_claims( $product_page_id ) {
     $search_criteria  = array();
     $sorting          = array();
     $paging           = array( 'offset' => 0, 'page_size' => 200 );
+    $claim_form       = GFAPI::get_form( $form_id );
+    $claim_statuses   = '';
     $all_claims       = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging );
+
+    foreach ( $claim_form[ 'fields' ][ 11 ][ 'choices' ] as $option ) {
+      $claim_statuses .= '<option value="' . $option[ 'value' ] . '">' . $option[ 'text' ] . '</option>';
+    }
 
     foreach ( $all_claims as $claim ) {
 
@@ -276,12 +277,15 @@ function lpd_get_affinity_claims( $product_page_id ) {
 
         ?>
 
-        <table id="list-of-claims">
+        <table class="list-of-claims">
           <thead>
             <tr>
               <td>Claim ID</td>
+              <td>Date</td>
               <td>Name</td>
               <td>Email Address</td>
+              <td>Phone Number</td>
+              <td>Claim Status</td>
             </tr>
           </thead>
           <tbody>
@@ -290,8 +294,19 @@ function lpd_get_affinity_claims( $product_page_id ) {
 
               <tr>
                 <td><?php echo $claim[ 'id' ]; ?></td>
+                <td><?php echo date( 'Y-m-d', strtotime( $claim[ 'date_created' ] ) ); ?></td>
                 <td><?php echo $claim[ '1.3' ] . ' ' . $claim[ '1.6' ]; ?></td>
                 <td><?php echo $claim[ 2 ]; ?></td>
+                <td><?php echo $claim[ 5 ]; ?></td>
+                <td class="claim_status">
+                  <form method="POST" action="lpd-update-claim-status.php">
+                    <label class="hidden" for="select-claim-<?php echo $claim[ 'id' ]; ?>-status">Update Claim Status</label>
+                    <select id="select-claim-<?php echo $claim[ 'id' ]; ?>-status">
+                      <?php echo $claim_statuses; ?>
+                    </select>
+                    <button type="submit" class="greybutton update_status">Update</button>
+                  </form>
+                </td>
               </tr>
 
             <?php } ?>

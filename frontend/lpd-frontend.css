@@ -13,6 +13,10 @@ Dashboard Title
   font-family: concourse, sans-serif;
 }
 
+.partner-dashboard select {
+  font-family: concourse, sans-serif !important;
+}
+
 
 /* Layout */
 .partner-dashboard {
@@ -146,14 +150,39 @@ Dashboard Title
 
   }
 
-#list-of-claims thead {
-  font-size: 1.8rem;
-  font-weight: bold;
+table.list-of-claims {
+  width: 100%;
 }
 
-#list-of-claims tbody {
-  font-size: 1.6rem;
-}
+  .list-of-claims thead {
+    font-size: 1.8rem;
+    font-weight: bold;
+  }
+
+  .list-of-claims tbody {
+    font-size: 1.6rem;
+  }
+
+  .list-of-claims td.claim_status {
+    padding: .75rem;
+  }
+
+  .list-of-claims td.claim_status form {
+    display: grid;
+    grid-column-gap: .5rem;
+    grid-template-columns: max-content 1fr;
+  }
+
+    .list-of-claims td.claim_status select {
+      width: 100%;
+    }
+
+    .list-of-claims td.claim_status button {
+      align-self: center;
+      height: 2.8rem;
+      line-height: 2.8rem;
+      margin: 0;
+    }
 
 #lpd-authorized-users .authorized-user {
   display: grid;
