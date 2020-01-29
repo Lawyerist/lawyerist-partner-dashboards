@@ -102,11 +102,16 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
 
         <div id="affinity-benefit-claims">
           <div class="report-label">Affinity Benefit Claims</div>
-          <div class="report-number">3</div>
-          <div class="report-label-detail"><a href="">See Claims</a></div>
+          <div class="report-number"><?php echo lpd_count_affinity_claims( $product_page->ID ); ?></div>
+          <div class="report-label-detail">See claim details below.</div>
         </div>
 
       </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Affinity Benefit Claims</div>
+      <?php echo lpd_get_affinity_claims( $product_page ); ?>
     </div>
 
     <?php
@@ -200,6 +205,118 @@ function getReport( $analytics, $page_path ) {
   $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
   $body->setReportRequests( array( $request) );
   return $analytics->reports->batchGet( $body );
+
+}
+
+
+/**
+* Gets affinity benefit claim count.
+*/
+function lpd_count_affinity_claims( $product_page_id ) {
+
+  if ( is_plugin_active( 'gravityforms/gravityforms.php' ) ) :
+
+    $product_page_path  = parse_url( get_permalink( $product_page_id ), PHP_URL_PATH );
+    $claim_count        = 0;
+
+    $form_id          = 55;
+    $search_criteria  = array();
+    $sorting          = array();
+    $paging           = array( 'offset' => 0, 'page_size' => 200 );
+    $all_claims       = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging );
+
+    foreach ( $all_claims as $claim ) {
+
+      $claim_source_url = parse_url( $claim[ 'source_url' ], PHP_URL_PATH );
+
+      if ( $claim_source_url == $product_page_path ) {
+        $claim_count++;
+      }
+
+    }
+
+    return $claim_count;
+
+  else: return;
+
+  endif;
+
+
+}
+
+
+/**
+* Gets affinity benefit claims.
+*/
+function lpd_get_affinity_claims( $product_page_id ) {
+
+  if ( is_plugin_active( 'gravityforms/gravityforms.php' ) ) :
+
+    $product_page_path  = parse_url( get_permalink( $product_page_id ), PHP_URL_PATH );
+    $claims             = array();
+
+    $form_id          = 55;
+    $search_criteria  = array();
+    $sorting          = array();
+    $paging           = array( 'offset' => 0, 'page_size' => 200 );
+    $all_claims       = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging );
+
+    foreach ( $all_claims as $claim ) {
+
+      $claim_source_url = parse_url( $claim[ 'source_url' ], PHP_URL_PATH ) ;
+
+      if ( $claim_source_url == $product_page_path ) {
+        $claims[] = $claim;
+      }
+
+    }
+
+    if ( !empty( $claims ) ) {
+
+      ob_start();
+
+        ?>
+
+        <table id="list-of-claims">
+          <thead>
+            <tr>
+              <td>Claim ID</td>
+              <td>Name</td>
+              <td>Email Address</td>
+            </tr>
+          </thead>
+          <tbody>
+
+            <?php foreach ( $claims as $claim ) { ?>
+
+              <tr>
+                <td><?php echo $claim[ 'id' ]; ?></td>
+                <td><?php echo $claim[ '1.3' ] . ' ' . $claim[ '1.6' ]; ?></td>
+                <td><?php echo $claim[ 2 ]; ?></td>
+              </tr>
+
+            <?php } ?>
+
+          </tbody>
+        </table>
+
+
+
+        </table>
+
+        <?php
+
+      return ob_get_clean();
+
+    } else {
+
+      return;
+
+    }
+
+  else: return;
+
+  endif;
 
 }
 

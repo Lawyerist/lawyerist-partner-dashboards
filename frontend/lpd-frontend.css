@@ -146,21 +146,30 @@ Dashboard Title
 
   }
 
-  #lpd-authorized-users .authorized-user {
-    display: grid;
-    grid-column-gap: 1.5rem;
-    grid-template-columns: minmax( 5rem, 9rem ) 1fr;
+#list-of-claims thead {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+#list-of-claims tbody {
+  font-size: 1.6rem;
+}
+
+#lpd-authorized-users .authorized-user {
+  display: grid;
+  grid-column-gap: 1.5rem;
+  grid-template-columns: minmax( 5rem, 9rem ) 1fr;
+}
+
+  #lpd-authorized-users .user-details {
+    align-self: center;
   }
 
-    #lpd-authorized-users .user-details {
-      align-self: center;
+    #authorized-users .user-name {
+      font-size: 1.8rem;
     }
 
-      #authorized-users .user-name {
-        font-size: 1.8rem;
-      }
-
-      #lpd-authorized-users .user-email {
-        color: #777;
-        font-size: 1.4rem;
-      }
+    #lpd-authorized-users .user-email {
+      color: #777;
+      font-size: 1.4rem;
+    }
