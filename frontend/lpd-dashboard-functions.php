@@ -100,17 +100,16 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
           <div class="report-label-detail"><?php echo $report_data[ 'tb_total_clicks' ]; ?> Total Clicks</div>
         </div>
 
-        <div id="affinity-benefit-claims">
-          <div class="report-label">Affinity Benefit Claims</div>
-          <div class="report-number"><?php echo lpd_count_affinity_claims( $product_page->ID ); ?></div>
-          <div class="report-label-detail">See claim details below.</div>
-        </div>
-
       </div>
     </div>
 
     <div class="card">
       <div class="card-label">Affinity Benefit Claims</div>
+
+      <div id="affinity-benefit-claims">
+        <div class="report-number"><?php echo lpd_count_affinity_claims( $product_page->ID ); ?></div>
+      </div>
+
       <?php echo lpd_get_affinity_claims( $product_page ); ?>
     </div>
 
