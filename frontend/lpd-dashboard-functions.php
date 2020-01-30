@@ -58,7 +58,7 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
     <div class="card">
       <div class="card-label">Product Page</div>
 
-      <div class="cols-4" id="lpd-product-page-report">
+      <div class="cols-5" id="lpd-product-page-report">
 
         <div id="product-portal-views">
           <div class="report-label">Product Portal Views</div>
@@ -100,11 +100,16 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
           <div class="report-label-detail"><?php echo $report_data[ 'tb_total_clicks' ]; ?> Total Clicks</div>
         </div>
 
+        <div id="affinity-benefit-claims">
+          <div class="report-label">Affinity Benefit Claims</div>
+          <div class="report-number"><?php echo lpd_count_affinity_claims( $product_page->ID ); ?></div>
+        </div>
+
       </div>
     </div>
 
     <div class="card">
-      <div class="card-label">Affinity Benefit Claims</div>
+      <div class="card-label">Affinity Benefit Claim Details</div>
       <?php echo lpd_get_affinity_claims( $product_page ); ?>
     </div>
 
@@ -244,120 +249,166 @@ function lpd_count_affinity_claims( $product_page_id ) {
 */
 function lpd_get_affinity_claims( $product_page_id ) {
 
-  if ( is_plugin_active( 'gravityforms/gravityforms.php' ) ) :
+  if ( !is_plugin_active( 'gravityforms/gravityforms.php' ) ) { return; }
 
-    $product_page_path  = parse_url( get_permalink( $product_page_id ), PHP_URL_PATH );
+  $product_page_path  = parse_url( get_permalink( $product_page_id ), PHP_URL_PATH );
+  $form_id            = 55;
+  $search_criteria    = array();
+  $sorting            = array();
+  $paging             = array( 'offset' => 0, 'page_size' => 200 );
+  $all_claims         = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging );
 
-    $form_id          = 55;
-    $search_criteria  = array();
-    $sorting          = array();
-    $paging           = array( 'offset' => 0, 'page_size' => 200 );
-    $claim_form       = GFAPI::get_form( $form_id );
-    $all_claims       = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging );
+  // Creates arrays of claims for this product, sorted by status.
+  $new_claims         = array();
+  $existing_customers = array();
+  $closed_won         = array();
+  $closed_lost        = array();
 
-    // Creates an array of claims for this product.
-    $claims = array();
+  foreach ( $all_claims as $claim ) {
 
-    foreach ( $all_claims as $claim ) {
+    $claim_source_url = parse_url( $claim[ 'source_url' ], PHP_URL_PATH ) ;
 
-      $claim_source_url = parse_url( $claim[ 'source_url' ], PHP_URL_PATH ) ;
+    if ( $claim_source_url == $product_page_path ) {
 
-      if ( $claim_source_url == $product_page_path ) {
-        $claims[] = $claim;
+      // var_dump( $claim );
+
+      $select_name  = 'claim-' . $claim[ 'id' ] . '-status';
+      $claim_status = $claim[ 13 ];
+
+      if ( isset( $_POST[ $select_name ] ) && $_POST[ $select_name ] !== $claim_status ) {
+        $claim[ 13 ] = $_POST[ $select_name ];
+        GFAPI::update_entry( $claim );
+      }
+
+      switch ( $claim[ 13 ] ) {
+
+        case 'Existing Customer' :
+          $existing_customers[] = $claim;
+          break;
+
+        case 'Closed: Won' :
+          $closed_won[] = $claim;
+          break;
+
+        case 'Closed: Lost' :
+          $closed_lost[] = $claim;
+          break;
+
+        case 'New Claim' :
+        case null :
+          $new_claims[] = $claim;
+          break;
+
       }
 
     }
 
-    if ( !empty( $claims ) ) {
+  }
 
-      ob_start();
+  ?>
 
-        ?>
+  <div class="table-label">New Claims</div>
+  <?php echo lpd_get_affinity_claim_table( $new_claims ); ?>
 
-        <form id="update-claim-status" action="" method="POST">
+  <div class="table-label">Customers Won</div>
+  <?php echo lpd_get_affinity_claim_table( $closed_won ); ?>
 
-          <table>
-            <thead>
-              <tr>
-                <td>Claim ID</td>
-                <td>Date</td>
-                <td>Name</td>
-                <td>Email Address</td>
-                <td>Phone Number</td>
-                <td>Claim Status</td>
-              </tr>
-            </thead>
-            <tbody>
+  <div class="card-label expandthis-click">Show Existing & Lost Customers</div>
 
-              <?php
+  <div class="expandthis-hide">
 
-              foreach ( $claims as $claim ) {
+    <div class="table-label">Customers Lost</div>
+    <?php echo lpd_get_affinity_claim_table( $closed_lost ); ?>
 
-                $select_name  = 'claim-' . $claim[ 'id' ] . '-status';
-                $claim_status = $claim[ 13 ];
+    <div class="table-label">Existing Customers</div>
+    <?php echo lpd_get_affinity_claim_table( $existing_customers ); ?>
 
-                if ( isset( $_POST[ $select_name ] ) && $_POST[ $select_name ] !== $claim_status ) {
-                  $claim[ 13 ] = $_POST[ $select_name ];
-                  GFAPI::update_entry( $claim );
-                }
+  </div>
 
-                ?>
+  <?php
 
-                <tr>
-                  <td><?php echo $claim[ 'id' ]; ?></td>
-                  <td><?php echo date( 'Y-m-d', strtotime( $claim[ 'date_created' ] ) ); ?></td>
-                  <td><?php echo $claim[ '1.3' ] . ' ' . $claim[ '1.6' ]; ?></td>
-                  <td><?php echo $claim[ 2 ]; ?></td>
-                  <td><?php echo $claim[ 5 ]; ?></td>
-                  <td class="claim_status">
-                    <label class="hidden" for="<?php echo $select_name; ?>-select">Update claim <?php echo $claim[ 'id' ]; ?> status.</label>
-                    <select name="<?php echo $select_name; ?>" id="<?php echo $select_name; ?>-select">
+}
 
-                      <?php
 
-                      foreach ( $claim_form[ 'fields' ][ 11 ][ 'choices' ] as $option ) {
+function lpd_get_affinity_claim_table( $claims ) {
 
-                        echo '<option value="' . $option[ 'value' ] . '"';
+  if ( empty( $claims ) ) { return; }
 
-                        if ( $option[ 'value' ] == $claim[ 13 ] ) {
-                          echo ' selected';
-                        }
+  ob_start();
 
-                        echo '>' . $option[ 'text' ] . '</option>';
+    $form_id    = 55;
+    $claim_form = GFAPI::get_form( $form_id );
 
-                      }
+    ?>
 
-                      ?>
+    <form action="" method="POST">
 
-                    </select>
-                  </td>
-                </tr>
+      <table class="affinity-claims">
+        <thead>
+          <tr>
+            <td>Claim ID</td>
+            <td>Date</td>
+            <td>Name</td>
+            <td>Email Address</td>
+            <td>Phone Number</td>
+            <td>Claim Status</td>
+          </tr>
+        </thead>
+        <tbody>
 
-                <?php
+          <?php
 
-              }
+          foreach ( $claims as $claim ) {
 
-              ?>
+            $select_name  = 'claim-' . $claim[ 'id' ] . '-status';
 
-            </tbody>
-          </table>
+            ?>
 
-          <p style="text-align: right;"><button type="submit">Update</button></p>
-        </form>
+            <tr>
+              <td><?php echo $claim[ 'id' ]; ?></td>
+              <td><?php echo date( 'Y-m-d', strtotime( $claim[ 'date_created' ] ) ); ?></td>
+              <td><?php echo $claim[ '1.3' ] . ' ' . $claim[ '1.6' ]; ?></td>
+              <td><?php echo $claim[ 2 ]; ?></td>
+              <td><?php echo $claim[ 5 ]; ?></td>
+              <td class="claim_status">
+                <label class="hidden" for="<?php echo $select_name; ?>-select">Update claim <?php echo $claim[ 'id' ]; ?> status.</label>
+                <select name="<?php echo $select_name; ?>" id="<?php echo $select_name; ?>-select">
 
-        <?php
+                  <?php
 
-      return ob_get_clean();
+                  foreach ( $claim_form[ 'fields' ][ 11 ][ 'choices' ] as $option ) {
 
-    } else {
+                    echo '<option value="' . $option[ 'value' ] . '"';
 
-      return;
+                    if ( $option[ 'value' ] == $claim[ 13 ] ) {
+                      echo ' selected';
+                    }
 
-    }
+                    echo '>' . $option[ 'text' ] . '</option>';
 
-  else: return;
+                  }
 
-  endif;
+                  ?>
+
+                </select>
+              </td>
+            </tr>
+
+            <?php
+
+          }
+
+          ?>
+
+        </tbody>
+      </table>
+
+      <p style="text-align: right;"><button type="submit">Update</button></p>
+    </form>
+
+    <?php
+
+  return ob_get_clean();
 
 }
 
