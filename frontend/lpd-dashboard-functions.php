@@ -244,10 +244,6 @@ function lpd_count_affinity_claims( $product_page_id ) {
 */
 function lpd_get_affinity_claims( $product_page_id ) {
 
-  if ( isset( $_POST ) ) {
-    var_dump( $_POST );
-  }
-
   if ( is_plugin_active( 'gravityforms/gravityforms.php' ) ) :
 
     $product_page_path  = parse_url( get_permalink( $product_page_id ), PHP_URL_PATH );
@@ -295,6 +291,18 @@ function lpd_get_affinity_claims( $product_page_id ) {
 
               <?php foreach ( $claims as $claim ) { ?>
 
+                <?
+
+                $select_name  = 'claim-' . $claim[ 'id' ] . '-status';
+                $claim_status = $claim[ 13 ];
+
+                if ( isset( $_POST[ $select_name ] ) && $_POST[ $select_name ] !== $claim_status ) {
+                  $claim[ 13 ] = $_POST[ $select_name ];
+                  GFAPI::update_entry( $claim );
+                }
+
+                ?>
+
                 <tr>
                   <td><?php echo $claim[ 'id' ]; ?></td>
                   <td><?php echo date( 'Y-m-d', strtotime( $claim[ 'date_created' ] ) ); ?></td>
@@ -302,8 +310,8 @@ function lpd_get_affinity_claims( $product_page_id ) {
                   <td><?php echo $claim[ 2 ]; ?></td>
                   <td><?php echo $claim[ 5 ]; ?></td>
                   <td class="claim_status">
-                    <label class="hidden" for="claim-<?php echo $claim[ 'id' ]; ?>-status">Update claim <?php echo $claim[ 'id' ]; ?> status.</label>
-                    <select id="claim-<?php echo $claim[ 'id' ]; ?>-status">
+                    <label class="hidden" for="<?php echo $select_name; ?>-select">Update claim <?php echo $claim[ 'id' ]; ?> status.</label>
+                    <select name="<?php echo $select_name; ?>" id="<?php echo $select_name; ?>-select">
 
                       <?php
 
