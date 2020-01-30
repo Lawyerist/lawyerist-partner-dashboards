@@ -19,4 +19,6 @@ All notable changes to this project will be documented in this file. The format 
     - Portal and product page views from Google Analytics.
     - Product rating.
     - Trial button clicks.
+  - Affinity benefit claims.
+    - Status with updates.
   - Authorized user card.
