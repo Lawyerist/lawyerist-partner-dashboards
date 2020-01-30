@@ -150,39 +150,27 @@ Dashboard Title
 
   }
 
-table.list-of-claims {
+#update-claim-status table {
+  margin-bottom: 1rem;
   width: 100%;
 }
 
-  .list-of-claims thead {
+  #update-claim-status thead {
     font-size: 1.8rem;
     font-weight: bold;
   }
 
-  .list-of-claims tbody {
+  #update-claim-status tbody {
     font-size: 1.6rem;
   }
 
-  .list-of-claims td.claim_status {
-    padding: .75rem;
-  }
-
-  .list-of-claims td.claim_status form {
-    display: grid;
-    grid-column-gap: .5rem;
-    grid-template-columns: max-content 1fr;
-  }
-
-    .list-of-claims td.claim_status select {
+    #update-claim-status td.claim_status select {
       width: 100%;
     }
 
-    .list-of-claims td.claim_status button {
-      align-self: center;
-      height: 2.8rem;
-      line-height: 2.8rem;
-      margin: 0;
-    }
+#update-claim-status button {
+  margin: 0;
+}
 
 #lpd-authorized-users .authorized-user {
   display: grid;
