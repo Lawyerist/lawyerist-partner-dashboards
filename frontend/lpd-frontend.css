@@ -164,6 +164,10 @@ Dashboard Title
     font-size: 1.6rem;
   }
 
+    #update-claim-status tbody tr:hover {
+      background-color: #eee;
+    }
+
     #update-claim-status td.claim_status select {
       width: 100%;
     }
