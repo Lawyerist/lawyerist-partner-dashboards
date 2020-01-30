@@ -289,9 +289,9 @@ function lpd_get_affinity_claims( $product_page_id ) {
             </thead>
             <tbody>
 
-              <?php foreach ( $claims as $claim ) { ?>
+              <?php
 
-                <?
+              foreach ( $claims as $claim ) {
 
                 $select_name  = 'claim-' . $claim[ 'id' ] . '-status';
                 $claim_status = $claim[ 13 ];
@@ -333,7 +333,11 @@ function lpd_get_affinity_claims( $product_page_id ) {
                   </td>
                 </tr>
 
-              <?php } ?>
+                <?php
+
+              }
+
+              ?>
 
             </tbody>
           </table>
