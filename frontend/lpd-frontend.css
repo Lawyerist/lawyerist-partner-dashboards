@@ -42,7 +42,6 @@ Dashboard Title
   margin-bottom: 1em;
 }
 
-.partner-dashboard .nodata-message,
 .partner-dashboard .card .report-label {
   color: #555;
   font-size: 1.6rem;
@@ -193,6 +192,11 @@ Dashboard Title
   text-decoration: none;
 }
 
+.partner-dashboard .nodata-message {
+  color: #555;
+  font-size: 1.6rem;
+  line-height: 1.5;
+}
 
 /* Layout */
 .cols-5 {

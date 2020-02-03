@@ -99,7 +99,7 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
 
     ?>
 
-    <p class="nodata-message">If you are not seeing data below, it probably means you do not have that ad product for that time period. Email <a href="mailto:partnerships@lawyerist.com">partnerships@lawyerist.com</a> to expand your campaign.</p>
+    <p class="nodata-message">If you are not seeing data below, it probably means you do not have that ad product for that time period. Get the <a href="https://lawyerist.com/ad-info" target="_blank">media kit</a> to see what you are missing, or email <a href="mailto:partnerships@lawyerist.com">partnerships@lawyerist.com</a> to expand your campaign.</p>
 
     <div class="card">
       <div class="card-label">Product Page</div>
