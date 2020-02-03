@@ -25,7 +25,7 @@ add_filter( 'body_class', 'lpd_body_class' );
 function lpd_template( $template ) {
 
   if ( is_page( LPD_PAGE_SLUG ) ) {
-    $template = plugin_dir_path( __FILE__ ) . 'lpd-template.php';
+    $template = plugin_dir_path( __FILE__ ) . 'lpd-dashboard-template.php';
   }
 
   return $template;
@@ -55,61 +55,33 @@ function lpd_get_partners_by_user( $user_id ) {
 
 }
 
-function lpd_dashboard() {
 
-	if ( !is_page( LPD_PAGE_SLUG ) ) {
-		return;
-	}
+function lpd_dashboard( $partner_id ) {
 
-	// Prevents content from loading if the current user is not logged in. Instead
-	// it shows a login form.
-	if ( is_user_logged_in() ) :
+	// Get post objects.
+	$page					= sanitize_text_field( $_GET[ 'page' ] );
+	$partner			= get_post( $partner_id );
+	$product_page = get_post( get_field( 'product_page', $partner_id ) );
+	$portal       = get_post( $product_page->post_parent );
 
-		$user_id		= get_current_user_ID();
-		$dashboards	= lpd_get_partners_by_user( $user_id ); // Returns an array.
+	echo lpd_get_dashboard_title( $partner->ID, $partner->post_title );
+	echo lpd_get_nav( $partner_id, $page );
 
-		if ( !$dashboards ) {
-
-			?>
-
-			<h1>No Dashboards Found</h1>
-
-			<p>It doesn't look like you are authorized to view any partner dashboards.</p>
-
-			<p>If you think this is an error, please <a href="https://lawyerist.local/about/contact/">contact us</a> and we will sort it out as quickly as possible!</p>
-
-			<?php
-
-		} elseif ( count( $dashboards ) == 1 ) {
-
-			// Get post objects.
-			$partner			= get_post( $dashboards[0] );
-			$product_page = get_post( get_field( 'product_page', $partner->ID ) );
-		  $portal       = get_post( $product_page->post_parent );
-
-			echo lpd_get_dashboard_title( $partner->ID, $partner->post_title );
-
-			echo lpd_get_product_page_report( $partner->ID, $product_page, $portal );
-
-		  echo lpd_get_authorized_users_list( $partner->ID );
-
-		} else {
-
-		}
-
-	else :
+	if ( $page == 'affinity_claims' ) {
 
 		?>
 
-		<h1>Sign in to Access Your Partner Dashboard(s)</h1>
-
-		<div class="card" id="lpd-login">
-			<?php wp_login_form(); ?>
-			<p class="login-lost-password remove_bottom">Forgot your password? <a href="<?php echo esc_url( wp_lostpassword_url() ); ?>">Reset it here.</a></p>
-		</div>
+		<h2>Affinity Benefit Claims</h2>
 
 		<?php
 
-	endif;
+		echo lpd_get_affinity_claims( $product_page );
+
+	} else {
+
+		echo lpd_get_product_page_report( $partner->ID, $product_page, $portal );
+		echo lpd_get_authorized_users_list( $partner->ID );
+
+	}
 
 }

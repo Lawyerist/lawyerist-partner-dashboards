@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [In Development]
 - Date filters.
-- Affinity partner 2-way reporting.
 
 ## [Unreleased]
 
@@ -13,6 +12,7 @@ All notable changes to this project will be documented in this file. The format 
 ### [Added]
 - Partner custom post type.
 - Create a Partner Dashboards page if it doesn't already exist.
+- Navigation for users with access to multiple dashboards.
 - Partner dashboard template.
   - Logo and title.
   - Product page card.

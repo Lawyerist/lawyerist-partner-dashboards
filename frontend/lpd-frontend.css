@@ -8,12 +8,14 @@ Dashboard Title
 
 /* Fonts */
 .partner-dashboard .card,
+.partner-dashboard #lpd-nav,
 .partner-dashboard .subtitle,
+.partner-dashboard .table-label,
 .partner-dashboard .nodata-message {
   font-family: concourse, sans-serif;
 }
 
-.partner-dashboard select {
+.partner-dashboard thead {
   font-family: concourse, sans-serif !important;
 }
 
@@ -88,6 +90,35 @@ Dashboard Title
 }
 
 
+/* Partner Dashboard List */
+#lpd-dashboard-list .card {
+  display: grid;
+  grid-column-gap: 1.5rem;
+  grid-template-columns: 11rem 1fr;
+}
+
+#lpd-dashboard-list a.card:hover {
+  text-decoration: none;
+}
+
+#lpd-dashboard-list .card .wp-post-image {
+  align-self: center;
+  background-color: #ddd;
+  box-sizing: content-box;
+  display: block;
+  margin: 0;
+  padding: .5rem;
+  width: 10rem;
+}
+
+#lpd-dashboard-list .card h2 {
+  align-self: center;
+}
+
+#lpd-dashboard-list a.card:hover h2 {
+  color: #a00;
+}
+
 /* Dashboard Title */
 #lpd-title {
     display: grid;
@@ -128,6 +159,42 @@ Dashboard Title
         text-transform: uppercase;
       }
 
+
+#lpd-nav {
+  border-bottom: .1rem solid #ddd;
+  display: grid;
+  grid-column-gap: .2rem;
+  grid-template-columns: repeat( 5, 1fr );
+  margin-bottom: 3rem;
+}
+
+#lpd-nav .tab {
+  background-color: #f9f9f9;
+  border-color: #ddd;
+  border-radius: .3rem .3rem 0 0;
+  border-style: solid;
+  border-width: .1rem .1rem 0 .1rem;
+  font-size: 1.4rem;
+  padding: 1rem .5rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#lpd-nav .tab.active {
+  background-color: #fff;
+  border-bottom: .1rem solid #fff;
+  margin-bottom: -.1rem;
+}
+
+#lpd-nav a.tab:hover,
+#lpd-nav a.tab:focus {
+  background-color: #ddd;
+  border-bottom: #fff;
+  text-decoration: none;
+}
+
+
+/* Layout */
 .cols-5 {
   display: grid;
   grid-column-gap: 1rem;

@@ -17,12 +17,58 @@ function lpd_get_dashboard_title( $partner_id, $partner_name ) {
 
     <div class="title-container">
       <h1 class="title"><?php echo $partner_name; ?></h1>
-      <p class="subtitle">Performance Dashboard</p>
+      <p class="subtitle">Partner Dashboard</p>
     </div>
 
   </div>
 
   <?php
+
+  return ob_get_clean();
+
+}
+
+
+function lpd_get_nav( $partner_id, $page ) {
+
+  ob_start();
+
+    ?>
+
+    <div id="lpd-nav">
+
+      <?php
+
+
+      switch ( $page ) {
+
+        case '' :
+
+          ?>
+
+          <div class="tab active">Performance Report</div>
+          <a href="?partner=<?php echo $partner_id; ?>&page=affinity_claims" class="tab">Affinity Claims Report</a>
+
+          <?php
+
+          break;
+
+        case 'affinity_claims' :
+
+          ?>
+
+          <a href="?partner=<?php echo $partner_id; ?>" class="tab">Performance Report</a>
+          <div class="tab active">Affinity Claims Report</div>
+
+          <?php
+
+          break;
+
+      } ?>
+
+    </div>
+
+    <?php
 
   return ob_get_clean();
 
@@ -97,25 +143,21 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
         <div id="trial-button-clicks">
           <div class="report-label">Trial Button Leads</div>
           <div class="report-number"><?php echo $report_data[ 'tb_unique_clicks' ]; ?></div>
-          <div class="report-label-detail"><?php echo $report_data[ 'tb_total_clicks' ]; ?> Total Clicks</div>
+          <?php if ( $report_data[ 'tb_total_clicks' ] > 0 ) { ?>
+            <div class="report-label-detail"><?php echo $report_data[ 'tb_total_clicks' ]; ?> Total Clicks</div>
+          <?php } ?>
         </div>
 
         <div id="affinity-benefit-claims">
           <div class="report-label">Affinity Benefit Claims</div>
           <div class="report-number"><?php echo lpd_count_affinity_claims( $product_page->ID ); ?></div>
+          <div class="report-label-detail"><a href="?partner=<?php echo $partner_id; ?>&page=affinity_claims">See Details</a></div>
         </div>
 
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-label">Affinity Benefit Claim Details</div>
-      <?php echo lpd_get_affinity_claims( $product_page ); ?>
-    </div>
-
     <?php
-
-    // var_dump( $portal );
 
   return ob_get_clean();
 
@@ -313,7 +355,7 @@ function lpd_get_affinity_claims( $product_page_id ) {
   <div class="table-label">Customers Won</div>
   <?php echo lpd_get_affinity_claim_table( $closed_won ); ?>
 
-  <div class="card-label expandthis-click">Show Existing & Lost Customers</div>
+  <button class="graybutton expandthis-click">Show Existing & Lost Customers</button>
 
   <div class="expandthis-hide">
 
