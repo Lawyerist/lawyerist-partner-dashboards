@@ -64,7 +64,7 @@ function lpd_dashboard( $partner_id ) {
 	$product_page = get_post( get_field( 'product_page', $partner_id ) );
 	$portal       = get_post( $product_page->post_parent );
 
-	echo lpd_get_dashboard_title( $partner->ID, $partner->post_title );
+	echo lpd_get_dashboard_title( $partner->ID, $product_page->ID, $partner->post_title );
 	echo lpd_get_nav( $partner_id, $page );
 
 	if ( $page == 'affinity_claims' ) {

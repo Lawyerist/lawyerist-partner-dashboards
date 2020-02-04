@@ -8,6 +8,7 @@ Dashboard Title
 
 /* Fonts */
 .partner-dashboard .card,
+.partner-dashboard #community-rating,
 .partner-dashboard #lpd-nav,
 .partner-dashboard .subtitle,
 .partner-dashboard .table-label,
@@ -38,21 +39,21 @@ Dashboard Title
   padding: 2rem;
 }
 
-.partner-dashboard .card .card-label {
+.partner-dashboard .card-label {
   margin-bottom: 1em;
 }
 
-.partner-dashboard .card .report-label {
+.partner-dashboard .report-label {
   color: #555;
   font-size: 1.6rem;
   line-height: 1.1;
 }
 
-.partner-dashboard .card .report-number {
+.partner-dashboard .report-number {
   font-size: 6.3rem;
 }
 
-.partner-dashboard .card .report-label-detail {
+.partner-dashboard .report-label-detail {
   color: #777;
   font-size: 1.2rem;
   line-height: 1.1;
@@ -121,9 +122,11 @@ Dashboard Title
 /* Dashboard Title */
 #lpd-title {
     display: grid;
-    grid-template-columns: 10rem auto;
     grid-column-gap: 1rem;
+    grid-template-columns: 10rem auto min-content;
+    grid-template-rows: 11rem;
     margin-bottom: 3rem;
+    overflow: visible;
   }
 
     #lpd-title div[itemprop="image"] {
@@ -157,7 +160,6 @@ Dashboard Title
         margin-bottom: 0;
         text-transform: uppercase;
       }
-
 
 #lpd-nav {
   border-bottom: .1rem solid #ddd;
@@ -199,13 +201,6 @@ Dashboard Title
 }
 
 /* Layout */
-.cols-5 {
-  display: grid;
-  grid-column-gap: 1rem;
-  grid-row-gap: 2.5rem;
-  grid-template-columns: repeat( 5, 1fr);
-}
-
 .cols-4 {
   display: grid;
   grid-column-gap: 1rem;

@@ -3,26 +3,50 @@
 /**
 * Gets the dashboard title block.
 */
-function lpd_get_dashboard_title( $partner_id, $partner_name ) {
+function lpd_get_dashboard_title( $partner_id, $product_page_id, $partner_name ) {
 
   ob_start();
 
-  ?>
+    ?>
 
-  <div id="lpd-title">
+    <div id="lpd-title">
 
-    <?php if ( has_post_thumbnail( $partner_id ) ) { ?>
-      <div itemprop="image"><?php echo get_the_post_thumbnail( $partner_id, 'thumbnail' ); ?></div>
-    <?php } ?>
+      <?php if ( has_post_thumbnail( $partner_id ) ) { ?>
+        <div itemprop="image"><?php echo get_the_post_thumbnail( $partner_id, 'thumbnail' ); ?></div>
+      <?php } ?>
 
-    <div class="title-container">
-      <h1 class="title"><?php echo $partner_name; ?></h1>
-      <p class="subtitle">Partner Dashboard</p>
+      <div class="title-container">
+        <h1 class="title"><?php echo $partner_name; ?></h1>
+        <p class="subtitle">Partner Dashboard</p>
+      </div>
+
+      <div id="community-rating">
+
+        <?php
+
+        $our_rating             = lawyerist_get_our_rating( $product_page_id );
+        $rating                 = lawyerist_get_composite_rating( $product_page_id );
+        $community_review_count = lawyerist_get_community_review_count( $product_page_id );
+
+        if ( !empty( $our_rating ) ) {
+          $rating_count = $community_review_count + 1;
+        } else {
+          $rating_count = $community_review_count;
+        }
+
+        ?>
+
+        <div class="card">
+          <div class="report-label">Product Rating</div>
+          <div class="report-number"><?php echo $rating; ?><span style="color: #777;">/5</span></div>
+          <div class="report-label-detail"><?php echo lawyerist_star_rating ( $rating ) . '<a href="' . get_permalink( $product_page_id ); ?>#rating">(<?php echo $rating_count . ' ' . _n( 'rating', 'ratings', $rating_count ) . '</a>'; ?>)</div>
+        </div>
+
+      </div>
+
     </div>
 
-  </div>
-
-  <?php
+    <?php
 
   return ob_get_clean();
 
@@ -81,10 +105,10 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
   $product_page_path    = parse_url( get_permalink( $product_page->ID ), PHP_URL_PATH ) ;
 
   $report_data  = array(
-    'portal_views'        => lpd_get_pageviews( $portal_path ),
-    'product_page_views'  => lpd_get_pageviews( $product_page_path ),
-    'tb_unique_clicks'    => trial_button_click_count( $product_page->ID, 'current', true ),
-    'tb_total_clicks'     => trial_button_click_count( $product_page->ID, 'current', false ),
+    'portal_views'        => $portal_path ? lpd_get_pageviews( $portal_path ) : null,
+    'product_page_views'  => $product_page_path ? lpd_get_pageviews( $product_page_path ) : null,
+    'tb_unique_clicks'    => has_trial_button( $product_page->ID ) ? trial_button_click_count( $product_page->ID, 'current', true ) : null,
+    'tb_total_clicks'     => has_trial_button( $product_page->ID ) ? trial_button_click_count( $product_page->ID, 'current', false ) : null,
   );
 
   foreach ( $report_data as $key => $value ) {
@@ -104,7 +128,7 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
     <div class="card">
       <div class="card-label">Product Page</div>
 
-      <div class="cols-5" id="lpd-product-page-report">
+      <div class="cols-4" id="lpd-product-page-report">
 
         <div id="product-portal-views">
           <div class="report-label">Product Portal Views</div>
@@ -116,28 +140,6 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
           <div class="report-label">Product Page Views</div>
           <div class="report-number"><?php echo $report_data[ 'product_page_views' ]; ?></div>
           <div class="report-label-detail"><a href="<?php echo get_permalink( $product_page->ID ); ?>"><?php echo $product_page->post_title; ?></a></div>
-        </div>
-
-        <div id="community-rating">
-
-          <?php
-
-          $our_rating             = lawyerist_get_our_rating( $product_page->ID );
-          $rating                 = lawyerist_get_composite_rating( $product_page->ID );
-          $community_review_count = lawyerist_get_community_review_count( $product_page->ID );
-
-          if ( !empty( $our_rating ) ) {
-            $rating_count = $community_review_count + 1;
-          } else {
-            $rating_count = $community_review_count;
-          }
-
-          ?>
-
-          <div class="report-label">Product Rating</div>
-          <div class="report-number"><?php echo $rating; ?><span style="color: #777;">/5</span></div>
-          <div class="report-label-detail"><?php echo lawyerist_star_rating ( $rating ) . '<a href="' . get_permalink( $product_page->ID ); ?>#rating">(<?php echo $rating_count . ' ' . _n( 'rating', 'ratings', $rating_count ) . '</a>'; ?>)</div>
-
         </div>
 
         <div id="trial-button-clicks">
@@ -312,8 +314,6 @@ function lpd_get_affinity_claims( $product_page_id ) {
 
     if ( $claim_source_url == $product_page_path ) {
 
-      // var_dump( $claim );
-
       $select_name  = 'claim-' . $claim[ 'id' ] . '-status';
       $claim_status = $claim[ 13 ];
 
@@ -347,27 +347,67 @@ function lpd_get_affinity_claims( $product_page_id ) {
 
   }
 
-  ?>
+  if ( count( $new_claims ) > 0 ) {
 
-  <div class="table-label">New Claims</div>
-  <?php echo lpd_get_affinity_claim_table( $new_claims ); ?>
+    ?>
 
-  <div class="table-label">Customers Won</div>
-  <?php echo lpd_get_affinity_claim_table( $closed_won ); ?>
+    <div class="table-label">New Claims</div>
+    <?php echo lpd_get_affinity_claim_table( $new_claims ); ?>
 
-  <button class="graybutton expandthis-click">Show Existing & Lost Customers</button>
+    <?php
 
-  <div class="expandthis-hide">
+  }
 
-    <div class="table-label">Customers Lost</div>
-    <?php echo lpd_get_affinity_claim_table( $closed_lost ); ?>
+  if ( count( $closed_won ) > 0 ) {
 
-    <div class="table-label">Existing Customers</div>
-    <?php echo lpd_get_affinity_claim_table( $existing_customers ); ?>
+    ?>
 
-  </div>
+    <div class="table-label">Customers Won</div>
+    <?php echo lpd_get_affinity_claim_table( $closed_won ); ?>
 
-  <?php
+    <?php
+
+  }
+
+  if ( count( $closed_lost ) > 0 || count( $existing_customers ) > 0 ) {
+
+    ?>
+
+    <button class="graybutton expandthis-click">Show Existing & Lost Customers</button>
+
+    <div class="expandthis-hide">
+
+      <?php
+
+      if ( count( $closed_lost ) > 0 ) {
+
+        ?>
+
+        <div class="table-label">Customers Lost</div>
+        <?php echo lpd_get_affinity_claim_table( $closed_lost ); ?>
+
+        <?php
+
+      }
+
+      if ( count( $existing_customers ) > 0 ) {
+
+        ?>
+
+        <div class="table-label">Existing Customers</div>
+        <?php echo lpd_get_affinity_claim_table( $existing_customers ); ?>
+
+        <?php
+
+      }
+
+      ?>
+
+    </div>
+
+    <?php
+
+  }
 
 }
 
@@ -388,12 +428,12 @@ function lpd_get_affinity_claim_table( $claims ) {
       <table class="affinity-claims">
         <thead>
           <tr>
-            <td>Claim ID</td>
-            <td>Date</td>
-            <td>Name</td>
-            <td>Email Address</td>
-            <td>Phone Number</td>
-            <td>Claim Status</td>
+            <th>Claim ID</th>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Email Address</th>
+            <th>Phone Number</th>
+            <th>Claim Status</th>
           </tr>
         </thead>
         <tbody>
