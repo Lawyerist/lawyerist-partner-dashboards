@@ -99,22 +99,63 @@ function lpd_get_nav( $partner_id, $page ) {
 }
 
 
-function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
+function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_filter ) {
 
   $portal_path          = parse_url( get_permalink( $portal->ID ), PHP_URL_PATH ) ;
   $product_page_path    = parse_url( get_permalink( $product_page->ID ), PHP_URL_PATH ) ;
 
-  $report_data  = array(
-    'portal_views'        => $portal_path ? lpd_get_pageviews( $portal_path ) : null,
-    'product_page_views'  => $product_page_path ? lpd_get_pageviews( $product_page_path ) : null,
+  switch ( $date_filter ) {
+
+    case 'last_year'  :
+
+      $date_range = array(
+        'start' => date( 'Y' ) - 1 . '-01-01',
+        'end'   => date( 'Y' ) - 1 . '-12-31',
+      );
+
+      break;
+
+    case 'this_year'  :
+
+      $date_range = array(
+        'start' => date( 'Y' ) . '-01-01',
+        'end'   => date( 'Y-m-d' ),
+      );
+
+      break;
+
+    case 'last_month' :
+
+      $date_range = array(
+        'start' => date( 'Y-m-d', strtotime( 'first day of previous month' ) ),
+        'end'   => date( 'Y-m-d', strtotime( 'last day of previous month' ) ),
+      );
+
+      break;
+
+    case 'this_month' :
+    default :
+
+      $date_range = array(
+        'start' => date( 'Y-m-d', strtotime( 'first day of this month' ) ),
+        'end'   => date( 'Y-m-d' ),
+      );
+
+      break;
+
+  }
+
+  $product_page_data  = array(
+    'portal_views'        => $portal_path ? lpd_get_pageviews( $portal_path, $date_range ) : null,
+    'product_page_views'  => $product_page_path ? lpd_get_pageviews( $product_page_path, $date_range ) : null,
     'tb_unique_clicks'    => has_trial_button( $product_page->ID ) ? trial_button_click_count( $product_page->ID, 'current', true ) : null,
     'tb_total_clicks'     => has_trial_button( $product_page->ID ) ? trial_button_click_count( $product_page->ID, 'current', false ) : null,
   );
 
-  foreach ( $report_data as $key => $value ) {
+  foreach ( $product_page_data as $key => $value ) {
 
     if ( is_null( $value ) || empty( $value ) || $value == 0 ) {
-      $report_data[ $key ] = '-';
+      $product_page_data[ $key ] = '-';
     }
 
   }
@@ -123,39 +164,51 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
 
     ?>
 
-    <p class="nodata-message">If you are not seeing data below, it probably means you do not have that ad product for that time period. Get the <a href="https://lawyerist.com/ad-info" target="_blank">media kit</a> to see what you are missing, or email <a href="mailto:partnerships@lawyerist.com">partnerships@lawyerist.com</a> to expand your campaign.</p>
+    <div id="lpd-performance-report">
 
-    <div class="card">
-      <div class="card-label">Product Page</div>
+      <p class="nodata-message">If you are not seeing data below, it probably means you do not have that ad product for that time period. Get the <a href="https://lawyerist.com/ad-info" target="_blank">media kit</a> to see what you are missing, or email <a href="mailto:partnerships@lawyerist.com">partnerships@lawyerist.com</a> to expand your campaign.</p>
 
-      <div class="cols-4" id="lpd-product-page-report">
+      <p class="card-label">Date Range</p>
+      <div id="date-range">
+        <a>This Month</a>
+        <a>Last Month</a>
+        <a>This Year</a>
+        <a>Last Year</a>
+        <div class="clear"></div>
+      </div>
 
-        <div id="product-portal-views">
-          <div class="report-label">Product Portal Views</div>
-          <div class="report-number"><?php echo $report_data[ 'portal_views' ]; ?></div>
-          <div class="report-label-detail"><a href="<?php echo get_permalink( $portal->ID ); ?>"><?php echo $portal->post_title; ?></a></div>
+      <div class="card">
+        <div class="card-label">Product Page</div>
+
+        <div class="cols-4" id="lpd-product-page-report">
+
+          <div class="col">
+            <div class="report-label">Product Portal Views</div>
+            <div class="report-number"><?php echo $product_page_data[ 'portal_views' ]; ?></div>
+            <div class="report-label-detail"><a href="<?php echo get_permalink( $portal->ID ); ?>"><?php echo $portal->post_title; ?></a></div>
+          </div>
+
+          <div class="col">
+            <div class="report-label">Product Page Views</div>
+            <div class="report-number"><?php echo $product_page_data[ 'product_page_views' ]; ?></div>
+            <div class="report-label-detail"><a href="<?php echo get_permalink( $product_page->ID ); ?>"><?php echo $product_page->post_title; ?></a></div>
+          </div>
+
+          <div class="col">
+            <div class="report-label">Trial Button Leads</div>
+            <div class="report-number"><?php echo $product_page_data[ 'tb_unique_clicks' ]; ?></div>
+            <?php if ( $product_page_data[ 'tb_total_clicks' ] > 0 ) { ?>
+              <div class="report-label-detail"><?php echo $product_page_data[ 'tb_total_clicks' ]; ?> Total Clicks</div>
+            <?php } ?>
+          </div>
+
+          <div class="col">
+            <div class="report-label">Affinity Benefit Claims</div>
+            <div class="report-number"><?php echo lpd_count_affinity_claims( $product_page->ID ); ?></div>
+            <div class="report-label-detail"><a href="?partner=<?php echo $partner_id; ?>&page=affinity_claims">See Details</a></div>
+          </div>
+
         </div>
-
-        <div id="product-page-views">
-          <div class="report-label">Product Page Views</div>
-          <div class="report-number"><?php echo $report_data[ 'product_page_views' ]; ?></div>
-          <div class="report-label-detail"><a href="<?php echo get_permalink( $product_page->ID ); ?>"><?php echo $product_page->post_title; ?></a></div>
-        </div>
-
-        <div id="trial-button-clicks">
-          <div class="report-label">Trial Button Leads</div>
-          <div class="report-number"><?php echo $report_data[ 'tb_unique_clicks' ]; ?></div>
-          <?php if ( $report_data[ 'tb_total_clicks' ] > 0 ) { ?>
-            <div class="report-label-detail"><?php echo $report_data[ 'tb_total_clicks' ]; ?> Total Clicks</div>
-          <?php } ?>
-        </div>
-
-        <div id="affinity-benefit-claims">
-          <div class="report-label">Affinity Benefit Claims</div>
-          <div class="report-number"><?php echo lpd_count_affinity_claims( $product_page->ID ); ?></div>
-          <div class="report-label-detail"><a href="?partner=<?php echo $partner_id; ?>&page=affinity_claims">See Details</a></div>
-        </div>
-
       </div>
     </div>
 
@@ -169,10 +222,10 @@ function lpd_get_product_page_report( $partner_id, $product_page, $portal ) {
 /**
 * Gets page views from Google Analytics.
 */
-function lpd_get_pageviews( $page_path ) {
+function lpd_get_pageviews( $page_path, $date_range ) {
 
   $analytics = initializeAnalytics();
-  $response = getReport( $analytics, $page_path );
+  $response = getReport( $analytics, $page_path, $date_range );
 
   return number_format ( lpd_get_results( $response ) );
 
@@ -217,12 +270,12 @@ function initializeAnalytics() {
  * @param service An authorized Analytics Reporting API V4 service object.
  * @return The Analytics Reporting API V4 response.
  */
-function getReport( $analytics, $page_path ) {
+function getReport( $analytics, $page_path, $date_range ) {
 
   // Create the DateRange object.
   $dateRange = new Google_Service_AnalyticsReporting_DateRange();
-  $dateRange->setStartDate( '7daysAgo' );
-  $dateRange->setEndDate( 'today' );
+  $dateRange->setStartDate( $date_range[ 'start' ] );
+  $dateRange->setEndDate( $date_range[ 'end' ] );
 
   // Create the Metrics object.
   $pageviews = new Google_Service_AnalyticsReporting_Metric();
@@ -347,67 +400,79 @@ function lpd_get_affinity_claims( $product_page_id ) {
 
   }
 
-  if ( count( $new_claims ) > 0 ) {
+  ?>
 
-    ?>
-
-    <div class="table-label">New Claims</div>
-    <?php echo lpd_get_affinity_claim_table( $new_claims ); ?>
+  <div id="lpd-affinity-claims">
 
     <?php
 
-  }
-
-  if ( count( $closed_won ) > 0 ) {
-
-    ?>
-
-    <div class="table-label">Customers Won</div>
-    <?php echo lpd_get_affinity_claim_table( $closed_won ); ?>
-
-    <?php
-
-  }
-
-  if ( count( $closed_lost ) > 0 || count( $existing_customers ) > 0 ) {
-
-    ?>
-
-    <button class="graybutton expandthis-click">Show Existing & Lost Customers</button>
-
-    <div class="expandthis-hide">
-
-      <?php
-
-      if ( count( $closed_lost ) > 0 ) {
-
-        ?>
-
-        <div class="table-label">Customers Lost</div>
-        <?php echo lpd_get_affinity_claim_table( $closed_lost ); ?>
-
-        <?php
-
-      }
-
-      if ( count( $existing_customers ) > 0 ) {
-
-        ?>
-
-        <div class="table-label">Existing Customers</div>
-        <?php echo lpd_get_affinity_claim_table( $existing_customers ); ?>
-
-        <?php
-
-      }
+    if ( count( $new_claims ) > 0 ) {
 
       ?>
 
-    </div>
+      <div class="table-label">New Claims</div>
+      <?php echo lpd_get_affinity_claim_table( $new_claims ); ?>
 
-    <?php
+      <?php
 
-  }
+    }
+
+    if ( count( $closed_won ) > 0 ) {
+
+      ?>
+
+      <div class="table-label">Customers Won</div>
+      <?php echo lpd_get_affinity_claim_table( $closed_won ); ?>
+
+      <?php
+
+    }
+
+    if ( count( $closed_lost ) > 0 || count( $existing_customers ) > 0 ) {
+
+      ?>
+
+      <button class="graybutton expandthis-click">Show Existing & Lost Customers</button>
+
+      <div class="expandthis-hide">
+
+        <?php
+
+        if ( count( $closed_lost ) > 0 ) {
+
+          ?>
+
+          <div class="table-label">Customers Lost</div>
+          <?php echo lpd_get_affinity_claim_table( $closed_lost ); ?>
+
+          <?php
+
+        }
+
+        if ( count( $existing_customers ) > 0 ) {
+
+          ?>
+
+          <div class="table-label">Existing Customers</div>
+          <?php echo lpd_get_affinity_claim_table( $existing_customers ); ?>
+
+          <?php
+
+        }
+
+        ?>
+
+      </div>
+
+      <?php
+
+    }
+
+    ?>
+
+  </div>
+
+<?php
 
 }
 
@@ -508,33 +573,31 @@ function lpd_get_authorized_users_list( $partner_id ) {
 
         ?>
 
-        <div class="card">
-          <div class="card-label">People Authorized to View this Dashboard</div>
-          <div class="cols-2" id="lpd-authorized-users">
+        <p class="card-label">People Authorized to View this Dashboard</p>
+        <div class="cols-2" id="lpd-authorized-users">
 
-            <?php
+          <?php
 
-            foreach ( $authorized_users as $user_id ) {
+          foreach ( $authorized_users as $user_id ) {
 
-              $user = get_userdata( $user_id );
-
-              ?>
-
-              <div class="authorized-user">
-                <?php echo get_avatar( $user_id, 90 ); ?>
-                <div class="user-details">
-                  <div class="user-name"><?php echo $user->display_name; ?></div>
-                  <div class="user-email"><?php echo $user->user_email; ?></div>
-                </div>
-              </div>
-
-              <?php
-
-            }
+            $user = get_userdata( $user_id );
 
             ?>
 
-          </div>
+            <div class="authorized-user">
+              <?php echo get_avatar( $user_id, 90 ); ?>
+              <div class="user-details">
+                <div class="user-name"><?php echo $user->display_name; ?></div>
+                <div class="user-email"><?php echo $user->user_email; ?></div>
+              </div>
+            </div>
+
+            <?php
+
+          }
+
+          ?>
+
         </div>
 
         <?php

@@ -60,6 +60,7 @@ function lpd_dashboard( $partner_id ) {
 
 	// Get post objects.
 	$page					= sanitize_text_field( $_GET[ 'page' ] );
+	$date_filter		= sanitize_text_field( $_GET[ 'date_filter' ] );
 	$partner			= get_post( $partner_id );
 	$product_page = get_post( get_field( 'product_page', $partner_id ) );
 	$portal       = get_post( $product_page->post_parent );
@@ -79,9 +80,10 @@ function lpd_dashboard( $partner_id ) {
 
 	} else {
 
-		echo lpd_get_product_page_report( $partner->ID, $product_page, $portal );
-		echo lpd_get_authorized_users_list( $partner->ID );
+		echo lpd_get_performance_report( $partner->ID, $product_page, $portal, $date_filter );
 
 	}
+
+	echo lpd_get_authorized_users_list( $partner->ID );
 
 }

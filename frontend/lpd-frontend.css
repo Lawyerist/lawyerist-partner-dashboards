@@ -9,6 +9,8 @@ Dashboard Title
 /* Fonts */
 .partner-dashboard .card,
 .partner-dashboard #community-rating,
+.partner-dashboard #date-range,
+.partner-dashboard #lpd-authorized-users,
 .partner-dashboard #lpd-nav,
 .partner-dashboard .subtitle,
 .partner-dashboard .table-label,
@@ -39,8 +41,8 @@ Dashboard Title
   padding: 2rem;
 }
 
-.partner-dashboard .card-label {
-  margin-bottom: 1em;
+.partner-dashboard .card .card-label {
+  margin-bottom: .5em;
 }
 
 .partner-dashboard .report-label {
@@ -194,11 +196,60 @@ Dashboard Title
   text-decoration: none;
 }
 
-.partner-dashboard .nodata-message {
-  color: #555;
-  font-size: 1.6rem;
-  line-height: 1.5;
+
+.partner-dashboard #lpd-performance-report,
+.partner-dashboard #lpd-affinity-claims {
+  margin-bottom: 3rem;
 }
+
+  .partner-dashboard .nodata-message {
+    color: #555;
+    font-size: 1.6rem;
+    line-height: 1.5;
+  }
+
+  .partner-dashboard #date-range {
+    color: #555;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .partner-dashboard #date-range a {
+    background-color: #bbb;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    font-size: 1.2rem;
+    margin: 0 .4rem .4rem 0;
+    padding: .4rem .8rem;
+    text-transform: uppercase;
+  }
+
+    .partner-dashboard #date-range a:hover,
+    .partner-dashboard #date-range a:hover {
+      background-color: #c5c5c5;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .partner-dashboard #date-range a:active,
+    .partner-dashboard #date-range a:active {
+      background-color: #a7a7a7;
+      color: #eee;
+    }
+
+    .partner-dashboard #date-range a.on,
+    .partner-dashboard #date-range a.on:hover {
+      background-color: #a7a7a7;
+      color: #fff;
+    }
+
+    .partner-dashboard #date-range a.on:active {
+      color: #eee;
+    }
+
 
 /* Layout */
 .cols-4 {
