@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 - Remove unused file lpd-frontend.js.
+- Add options page for Google Analytics view ID.
+- Fix some layout issues.
 
 ## [0.1.0] - 2020-02-05
 
