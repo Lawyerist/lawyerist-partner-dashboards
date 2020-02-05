@@ -12,7 +12,7 @@ function lpd_body_class( $classes ) {
     $classes[] = 'partner-dashboard';
 	}
 
-	if ( count( $_GET[ 'date_filter' ] ) > 0 ) {
+	if ( $_GET[ 'date_filter' ] ) {
 		$classes[] = 'date_filtered';
 	}
 
