@@ -104,6 +104,10 @@ function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_
   $portal_path          = parse_url( get_permalink( $portal->ID ), PHP_URL_PATH ) ;
   $product_page_path    = parse_url( get_permalink( $product_page->ID ), PHP_URL_PATH ) ;
 
+  // This is just for the dev server.
+  $portal_path          = str_replace( '/lawyerist/dev', '', $portal_path );
+  $product_page_path    = str_replace( '/lawyerist/dev', '', $product_page_path );
+
   switch ( $date_filter ) {
 
     case 'last_year'  :
@@ -341,57 +345,56 @@ function lpd_count_affinity_claims( $product_page_slug, $date_range ) {
 /**
 * Gets affinity benefit claims.
 */
-function lpd_get_affinity_claims( $product_page_id ) {
+function lpd_get_affinity_claims( $product_page_slug ) {
 
   if ( !is_plugin_active( 'gravityforms/gravityforms.php' ) ) { return; }
 
-  $product_page_path  = parse_url( get_permalink( $product_page_id ), PHP_URL_PATH );
   $form_id            = 55;
-  $search_criteria    = array();
+
+  $search_criteria[ 'field_filters' ][] = array(
+    'key'       => 'source_url',
+    'value'     => $product_page_slug,
+    'operator'  => 'contains',
+  );
+
   $sorting            = array();
   $paging             = array( 'offset' => 0, 'page_size' => 200 );
   $all_claims         = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging );
 
   // Creates arrays of claims for this product, sorted by status.
-  $new_claims         = array();
+  $in_progresss       = array();
   $existing_customers = array();
   $closed_won         = array();
   $closed_lost        = array();
 
   foreach ( $all_claims as $claim ) {
 
-    $claim_source_url = parse_url( $claim[ 'source_url' ], PHP_URL_PATH ) ;
+    $select_name  = 'claim-' . $claim[ 'id' ] . '-status';
+    $claim_status = $claim[ 13 ];
 
-    if ( $claim_source_url == $product_page_path ) {
+    if ( isset( $_POST[ $select_name ] ) && $_POST[ $select_name ] !== $claim_status ) {
+      $claim[ 13 ] = $_POST[ $select_name ];
+      GFAPI::update_entry( $claim );
+    }
 
-      $select_name  = 'claim-' . $claim[ 'id' ] . '-status';
-      $claim_status = $claim[ 13 ];
+    switch ( $claim[ 13 ] ) {
 
-      if ( isset( $_POST[ $select_name ] ) && $_POST[ $select_name ] !== $claim_status ) {
-        $claim[ 13 ] = $_POST[ $select_name ];
-        GFAPI::update_entry( $claim );
-      }
+      case 'Existing Customer' :
+        $existing_customers[] = $claim;
+        break;
 
-      switch ( $claim[ 13 ] ) {
+      case 'Closed: Won' :
+        $closed_won[] = $claim;
+        break;
 
-        case 'Existing Customer' :
-          $existing_customers[] = $claim;
-          break;
+      case 'Closed: Lost' :
+        $closed_lost[] = $claim;
+        break;
 
-        case 'Closed: Won' :
-          $closed_won[] = $claim;
-          break;
-
-        case 'Closed: Lost' :
-          $closed_lost[] = $claim;
-          break;
-
-        case 'New Claim' :
-        case null :
-          $new_claims[] = $claim;
-          break;
-
-      }
+      case 'In Progress' :
+      case null :
+        $in_progresss[] = $claim;
+        break;
 
     }
 
@@ -403,12 +406,12 @@ function lpd_get_affinity_claims( $product_page_id ) {
 
     <?php
 
-    if ( count( $new_claims ) > 0 ) {
+    if ( count( $in_progresss ) > 0 ) {
 
       ?>
 
-      <div class="table-label">New Claims</div>
-      <?php echo lpd_get_affinity_claim_table( $new_claims ); ?>
+      <div class="table-label">In Progress</div>
+      <?php echo lpd_get_affinity_claim_table( $in_progresss ); ?>
 
       <?php
 

@@ -84,7 +84,7 @@ function lpd_dashboard( $partner_id ) {
 
 		<?php
 
-		echo lpd_get_affinity_claims( $product_page );
+		echo lpd_get_affinity_claims( $product_page->post_name );
 
 	} else {
 
