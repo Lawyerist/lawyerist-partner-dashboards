@@ -123,45 +123,49 @@ Dashboard Title
 
 /* Dashboard Title */
 #lpd-title {
-    display: grid;
-    grid-column-gap: 1rem;
-    grid-template-columns: 10rem auto min-content;
-    grid-template-rows: 11rem;
-    margin-bottom: 3rem;
-    overflow: visible;
+  display: grid;
+  grid-column-gap: 1rem;
+  grid-template-columns: 10rem auto min-content;
+  grid-template-rows: 11rem;
+  margin-bottom: 3rem;
+  overflow: visible;
+}
+
+#lpd-title.no-thumbnail {
+  grid-template-columns: auto min-content;
+}
+
+  #lpd-title div[itemprop="image"] {
+    background-color: #ddd;
+    border-radius: .2rem;
+    box-sizing: border-box;
+    height: 10rem;
+    margin: 0 1rem 0 0;
+    padding: .5rem;
+    width: 10rem;
   }
 
-    #lpd-title div[itemprop="image"] {
-      background-color: #ddd;
-      border-radius: .2rem;
-      box-sizing: border-box;
-      height: 10rem;
-      margin: 0 1rem 0 0;
-      padding: .5rem;
-      width: 10rem;
+    #lpd-title img.wp-post-image {
+      height: 100%;
+      margin: auto 0;
+      max-width: none;
+      width: auto;
     }
 
-      #lpd-title img.wp-post-image {
-        height: 100%;
-        margin: auto 0;
-        max-width: none;
-        width: auto;
-      }
+  #lpd-title .title-container {
+    align-self: center;
+  }
 
-    #lpd-title .title-container {
-      align-self: center;
+    #lpd-title .title {
+      margin-bottom: 0;
     }
 
-      #lpd-title .title {
-        margin-bottom: 0;
-      }
-
-      #lpd-title .subtitle {
-        color: #777;
-        font-size: 1.8rem;
-        margin-bottom: 0;
-        text-transform: uppercase;
-      }
+    #lpd-title .subtitle {
+      color: #777;
+      font-size: 1.8rem;
+      margin-bottom: 0;
+      text-transform: uppercase;
+    }
 
 #lpd-nav {
   border-bottom: .1rem solid #ddd;
