@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
-## [0.1.0] - 2020-03-01 (Target Launch Date)
+## [0.1.0] - 2020-02-05
 
 ### [Added]
 - Partner custom post type.
