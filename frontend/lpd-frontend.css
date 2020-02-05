@@ -240,8 +240,16 @@ Dashboard Title
       color: #eee;
     }
 
-    .partner-dashboard #date-range a.on,
-    .partner-dashboard #date-range a.on:hover {
+    body:not( .date_filtered ) a#this-month-filter,
+    body:not( .date_filtered ) a#this-month-filter:hover,
+    .date_filter-this_month a#this-month-filter,
+    .date_filter-this_month a#this-month-filter:hover,
+    .date_filter-last_month a#last-month-filter,
+    .date_filter-last_month a#last-month-filter:hover,
+    .date_filter-this_year a#this-year-filter,
+    .date_filter-this_year a#this-year-filter:hover,
+    .date_filter-last_year a#last-year-filter,
+    .date_filter-last_year a#last-year-filter:hover {
       background-color: #a7a7a7;
       color: #fff;
     }

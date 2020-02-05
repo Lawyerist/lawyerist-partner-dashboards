@@ -12,6 +12,14 @@ function lpd_body_class( $classes ) {
     $classes[] = 'partner-dashboard';
 	}
 
+	if ( count( $_GET[ 'date_filter' ] ) > 0 ) {
+		$classes[] = 'date_filtered';
+	}
+
+	foreach ( $_GET as $key => $val ) {
+		$classes[] = $key . '-' . $val;
+	}
+
   return $classes;
 
 }
@@ -60,7 +68,7 @@ function lpd_dashboard( $partner_id ) {
 
 	// Get post objects.
 	$page					= sanitize_text_field( $_GET[ 'page' ] );
-	$date_filter		= sanitize_text_field( $_GET[ 'date_filter' ] );
+	$date_filter	= sanitize_text_field( $_GET[ 'date_filter' ] );
 	$partner			= get_post( $partner_id );
 	$product_page = get_post( get_field( 'product_page', $partner_id ) );
 	$portal       = get_post( $product_page->post_parent );

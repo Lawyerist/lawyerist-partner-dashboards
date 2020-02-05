@@ -71,7 +71,7 @@ function lpd_get_nav( $partner_id, $page ) {
           ?>
 
           <div class="tab active">Performance Report</div>
-          <a href="?partner=<?php echo $partner_id; ?>&page=affinity_claims" class="tab">Affinity Claims Report</a>
+          <a href="<?php echo add_query_arg( 'page', 'affinity_claims' ); ?>" class="tab">Affinity Claims Report</a>
 
           <?php
 
@@ -81,7 +81,7 @@ function lpd_get_nav( $partner_id, $page ) {
 
           ?>
 
-          <a href="?partner=<?php echo $partner_id; ?>" class="tab">Performance Report</a>
+          <a href="<?php echo remove_query_arg( 'page' ); ?>" class="tab">Performance Report</a>
           <div class="tab active">Affinity Claims Report</div>
 
           <?php
@@ -107,7 +107,6 @@ function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_
   switch ( $date_filter ) {
 
     case 'last_year'  :
-
       $date_range = array(
         'start' => date( 'Y' ) - 1 . '-01-01',
         'end'   => date( 'Y' ) - 1 . '-12-31',
@@ -116,7 +115,6 @@ function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_
       break;
 
     case 'this_year'  :
-
       $date_range = array(
         'start' => date( 'Y' ) . '-01-01',
         'end'   => date( 'Y-m-d' ),
@@ -125,7 +123,6 @@ function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_
       break;
 
     case 'last_month' :
-
       $date_range = array(
         'start' => date( 'Y-m-d', strtotime( 'first day of previous month' ) ),
         'end'   => date( 'Y-m-d', strtotime( 'last day of previous month' ) ),
@@ -135,7 +132,6 @@ function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_
 
     case 'this_month' :
     default :
-
       $date_range = array(
         'start' => date( 'Y-m-d', strtotime( 'first day of this month' ) ),
         'end'   => date( 'Y-m-d' ),
@@ -146,10 +142,12 @@ function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_
   }
 
   $product_page_data  = array(
-    'portal_views'        => $portal_path ? lpd_get_pageviews( $portal_path, $date_range ) : null,
-    'product_page_views'  => $product_page_path ? lpd_get_pageviews( $product_page_path, $date_range ) : null,
-    'tb_unique_clicks'    => has_trial_button( $product_page->ID ) ? trial_button_click_count( $product_page->ID, 'current', true ) : null,
-    'tb_total_clicks'     => has_trial_button( $product_page->ID ) ? trial_button_click_count( $product_page->ID, 'current', false ) : null,
+    'portal_views'        => $portal_path ? number_format( lpd_get_pageviews( $portal_path, $date_range ) ) : null,
+    'product_page_views'  => $product_page_path ? number_format( lpd_get_pageviews( $product_page_path, $date_range ) ) : null,
+    'tb_unique_clicks'    => has_trial_button( $product_page ) ? number_format( trial_button_click_count( $product_page->ID, $date_filter, true ) ) : null,
+    'tb_total_clicks'     => has_trial_button( $product_page ) ? number_format( trial_button_click_count( $product_page->ID, $date_filter, false ) ) : null,
+    'aff_filtered_claims' => number_format( lpd_count_affinity_claims( $product_page->post_name, $date_range ) ),
+    'aff_total_claims'    => number_format( lpd_count_affinity_claims( $product_page->post_name, 'all' ) ),
   );
 
   foreach ( $product_page_data as $key => $value ) {
@@ -170,10 +168,10 @@ function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_
 
       <p class="card-label">Date Range</p>
       <div id="date-range">
-        <a>This Month</a>
-        <a>Last Month</a>
-        <a>This Year</a>
-        <a>Last Year</a>
+        <a id="this-month-filter" href="<?php echo add_query_arg( 'date_filter', 'this_month' ); ?>">This Month</a>
+        <a id="last-month-filter" href="<?php echo add_query_arg( 'date_filter', 'last_month' ); ?>">Last Month</a>
+        <a id="this-year-filter" href="<?php echo add_query_arg( 'date_filter', 'this_year' ); ?>">This Year</a>
+        <a id="last-year-filter" href="<?php echo add_query_arg( 'date_filter', 'last_year' ); ?>">Last Year</a>
         <div class="clear"></div>
       </div>
 
@@ -204,8 +202,8 @@ function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_
 
           <div class="col">
             <div class="report-label">Affinity Benefit Claims</div>
-            <div class="report-number"><?php echo lpd_count_affinity_claims( $product_page->ID ); ?></div>
-            <div class="report-label-detail"><a href="?partner=<?php echo $partner_id; ?>&page=affinity_claims">See Details</a></div>
+            <div class="report-number"><?php echo $product_page_data[ 'aff_filtered_claims' ]; ?></div>
+            <div class="report-label-detail"><a href="<?php echo add_query_arg( 'page', 'affinity_claims' ); ?>">See All <?php echo $product_page_data[ 'aff_total_claims' ]; ?> Claims</a></div>
           </div>
 
         </div>
@@ -227,7 +225,7 @@ function lpd_get_pageviews( $page_path, $date_range ) {
   $analytics = initializeAnalytics();
   $response = getReport( $analytics, $page_path, $date_range );
 
-  return number_format ( lpd_get_results( $response ) );
+  return lpd_get_results( $response );
 
 }
 
@@ -308,28 +306,27 @@ function getReport( $analytics, $page_path, $date_range ) {
 /**
 * Gets affinity benefit claim count.
 */
-function lpd_count_affinity_claims( $product_page_id ) {
+function lpd_count_affinity_claims( $product_page_slug, $date_range ) {
 
   if ( is_plugin_active( 'gravityforms/gravityforms.php' ) ) :
 
-    $product_page_path  = parse_url( get_permalink( $product_page_id ), PHP_URL_PATH );
-    $claim_count        = 0;
-
     $form_id          = 55;
-    $search_criteria  = array();
+
+    $search_criteria[ 'field_filters' ][] = array(
+      'key'       => 'source_url',
+      'value'     => $product_page_slug,
+      'operator'  => 'contains',
+    );
+
+    if ( $date_range !== 'all' ) {
+      $search_criteria[ 'start_date' ]  = $date_range[ 'start' ];
+      $search_criteria[ 'end_date' ]    = $date_range[ 'end' ];
+    }
+
     $sorting          = array();
     $paging           = array( 'offset' => 0, 'page_size' => 200 );
-    $all_claims       = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging );
 
-    foreach ( $all_claims as $claim ) {
-
-      $claim_source_url = parse_url( $claim[ 'source_url' ], PHP_URL_PATH );
-
-      if ( $claim_source_url == $product_page_path ) {
-        $claim_count++;
-      }
-
-    }
+    $claim_count      = GFAPI::count_entries( $form_id, $search_criteria, $sorting, $paging );
 
     return $claim_count;
 
