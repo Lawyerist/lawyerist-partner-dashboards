@@ -104,10 +104,6 @@ function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_
   $portal_path          = parse_url( get_permalink( $portal->ID ), PHP_URL_PATH ) ;
   $product_page_path    = parse_url( get_permalink( $product_page->ID ), PHP_URL_PATH ) ;
 
-  // This is just for the dev server.
-  $portal_path          = str_replace( '/lawyerist/dev', '', $portal_path );
-  $product_page_path    = str_replace( '/lawyerist/dev', '', $product_page_path );
-
   switch ( $date_filter ) {
 
     case 'last_year'  :
