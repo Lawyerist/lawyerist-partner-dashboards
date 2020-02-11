@@ -91,36 +91,6 @@ Dashboard Title
   margin-bottom: 0;
 }
 
-
-/* Partner Dashboard List */
-#lpd-dashboard-list .card {
-  display: grid;
-  grid-column-gap: 1.5rem;
-  grid-template-columns: 11rem 1fr;
-}
-
-#lpd-dashboard-list a.card:hover {
-  text-decoration: none;
-}
-
-#lpd-dashboard-list .card .wp-post-image {
-  align-self: center;
-  background-color: #ddd;
-  box-sizing: content-box;
-  display: block;
-  margin: 0;
-  padding: .5rem;
-  width: 10rem;
-}
-
-#lpd-dashboard-list .card h2 {
-  align-self: center;
-}
-
-#lpd-dashboard-list a.card:hover h2 {
-  color: #a00;
-}
-
 /* Dashboard Title */
 #lpd-title {
   display: grid;

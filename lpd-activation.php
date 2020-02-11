@@ -50,7 +50,7 @@ function partner_post_type() {
 		'label'                 => 'Partner',
 		'description'           => 'Lawyerist\'s advertising partners.',
 		'labels'                => $labels,
-		'supports'              => array( 'title', 'thumbnail' ),
+		'supports'              => array( 'title' ),
 		'hierarchical'          => false,
 		'public'                => true,
 		'show_ui'               => true,
