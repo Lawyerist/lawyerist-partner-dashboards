@@ -73,8 +73,8 @@ function lpd_dashboard( $partner_id ) {
 	$page					= sanitize_text_field( $_GET[ 'page' ] );
 	$date_filter	= sanitize_text_field( $_GET[ 'date_filter' ] );
 	$partner			= get_post( $partner_id );
-	$product_page = get_post( get_field( 'product_page', $partner_id ) );
-	$portal       = get_post( $product_page->post_parent );
+	$product_page = get_field( 'product_page', $partner_id ) ? get_post( get_field( 'product_page', $partner_id ) ) : null;
+	$portal       = $product_page ? get_post( $product_page->post_parent ) : null;
 
 	echo lpd_get_dashboard_title( $partner->ID, $product_page->ID, $partner->post_title );
 	echo lpd_get_nav( $partner_id, $page );

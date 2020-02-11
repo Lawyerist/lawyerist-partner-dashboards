@@ -13,36 +13,40 @@ function lpd_get_dashboard_title( $partner_id, $product_page_id, $partner_name )
 
       <?php if ( has_post_thumbnail( $partner_id ) ) { ?>
         <div itemprop="image"><?php echo get_the_post_thumbnail( $partner_id, 'thumbnail' ); ?></div>
-      <?php }?>
+      <?php } ?>
 
       <div class="title-container">
         <h1 class="title"><?php echo $partner_name; ?></h1>
         <p class="subtitle">Partner Dashboard</p>
       </div>
 
-      <div id="community-rating">
+      <?php if ( $product_page_id ) { ?>
 
-        <?php
+        <div id="community-rating">
 
-        $our_rating             = lawyerist_get_our_rating( $product_page_id );
-        $rating                 = lawyerist_get_composite_rating( $product_page_id );
-        $community_review_count = lawyerist_get_community_review_count( $product_page_id );
+          <?php
 
-        if ( !empty( $our_rating ) ) {
-          $rating_count = $community_review_count + 1;
-        } else {
-          $rating_count = $community_review_count;
-        }
+          $our_rating             = lawyerist_get_our_rating( $product_page_id );
+          $rating                 = lawyerist_get_composite_rating( $product_page_id );
+          $community_review_count = lawyerist_get_community_review_count( $product_page_id );
 
-        ?>
+          if ( !empty( $our_rating ) ) {
+            $rating_count = $community_review_count + 1;
+          } else {
+            $rating_count = $community_review_count;
+          }
 
-        <div class="card">
-          <div class="report-label">Product Rating</div>
-          <div class="report-number"><?php echo $rating; ?><span style="color: #777;">/5</span></div>
-          <div class="report-label-detail"><?php echo lawyerist_star_rating ( $rating ) . '<a href="' . get_permalink( $product_page_id ); ?>#rating">(<?php echo $rating_count . ' ' . _n( 'rating', 'ratings', $rating_count ) . '</a>'; ?>)</div>
+          ?>
+
+          <div class="card">
+            <div class="report-label">Product Rating</div>
+            <div class="report-number"><?php echo $rating; ?><span style="color: #777;">/5</span></div>
+            <div class="report-label-detail"><?php echo lawyerist_star_rating ( $rating ) . '<a href="' . get_permalink( $product_page_id ); ?>#rating">(<?php echo $rating_count . ' ' . _n( 'rating', 'ratings', $rating_count ) . '</a>'; ?>)</div>
+          </div>
+
         </div>
 
-      </div>
+      <?php } ?>
 
     </div>
 
@@ -101,8 +105,8 @@ function lpd_get_nav( $partner_id, $page ) {
 
 function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_filter ) {
 
-  $portal_path          = parse_url( get_permalink( $portal->ID ), PHP_URL_PATH ) ;
-  $product_page_path    = parse_url( get_permalink( $product_page->ID ), PHP_URL_PATH ) ;
+  $portal_path          = $portal ? parse_url( get_permalink( $portal->ID ), PHP_URL_PATH ) : null;
+  $product_page_path    = $product_page ? parse_url( get_permalink( $product_page->ID ), PHP_URL_PATH ) : null;
 
   switch ( $date_filter ) {
 
