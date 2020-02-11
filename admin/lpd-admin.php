@@ -43,3 +43,24 @@ function remove_meta_boxes() {
 }
 
 add_action( 'do_meta_boxes', 'remove_meta_boxes' );
+
+
+/**
+* Sorts partners by title/name.
+*/
+function lpd_partner_sort_order($query) {
+
+  if( !$query->is_admin ) { return; }
+
+  if ($query->get( 'post_type' ) == 'partner') {
+
+    $query->set( 'orderby', 'title' );
+    $query->set( 'order', 'ASC' );
+
+  }
+
+  return $query;
+
+}
+
+add_filter( 'pre_get_posts', 'lpd_partner_sort_order' );
