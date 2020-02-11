@@ -3,8 +3,16 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [0.2.0] - 2020-02-05
+
+### [Added]
+- Options page for Google Analytics view ID.
+
+### [Changed]
 - Remove unused file lpd-frontend.js.
-- Add options page for Google Analytics view ID.
+
+### [Fixed]
 - Fix some layout issues.
 
 ## [0.1.0] - 2020-02-05
