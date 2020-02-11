@@ -50,11 +50,14 @@ function lpd_get_partners_by_user( $user_id ) {
 	}
 
 	$args = array(
-		'fields'				=> 'ids',
-		'meta_compare'	=> 'LIKE',
-		'meta_key'			=> 'authorized_users',
-		'meta_value'		=> $user_id,
-		'post_type'			=> 'partner',
+		'fields'					=> 'ids',
+		'meta_compare'		=> 'LIKE',
+		'meta_key'				=> 'authorized_users',
+		'meta_value'			=> $user_id,
+		'order'						=> 'asc',
+		'orderby'					=> 'title',
+		'post_type'				=> 'partner',
+		'posts_per_page'	=> -1,
 	);
 
 	$partner_ids = get_posts( $args );
