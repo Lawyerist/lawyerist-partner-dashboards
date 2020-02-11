@@ -9,11 +9,7 @@ function lpd_get_dashboard_title( $partner_id, $product_page_id, $partner_name )
 
     ?>
 
-    <div id="lpd-title"<?php if ( !has_post_thumbnail( $partner_id ) ) { echo ' class="no-thumbnail"'; } ?>">
-
-      <?php if ( has_post_thumbnail( $partner_id ) ) { ?>
-        <div itemprop="image"><?php echo get_the_post_thumbnail( $partner_id, 'thumbnail' ); ?></div>
-      <?php } ?>
+    <div id="lpd-title">
 
       <div class="title-container">
         <h1 class="title"><?php echo $partner_name; ?></h1>
