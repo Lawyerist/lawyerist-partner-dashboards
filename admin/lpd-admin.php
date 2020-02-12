@@ -20,10 +20,11 @@ function my_acf_op_init() {
 
 add_action( 'acf/init', 'my_acf_op_init' );
 
+
 /**
 * Cleans up the new/edit partner page.
 */
-function remove_meta_boxes() {
+function lpd_meta_boxes() {
 
   $metaboxes_to_remove = array(
     'wc-memberships-post-memberships-data',
@@ -40,9 +41,23 @@ function remove_meta_boxes() {
     remove_meta_box( $metabox, 'partner', 'normal' );
   }
 
+  add_meta_box(
+    'lpd-partner-dashboard-link',
+    'Dashboard',
+    'lpd_partner_dashboard_link',
+    'partner',
+    'side',
+    'high',
+  );
+
 }
 
-add_action( 'do_meta_boxes', 'remove_meta_boxes' );
+add_action( 'do_meta_boxes', 'lpd_meta_boxes' );
+
+
+function lpd_partner_dashboard_link( $post ) {
+  echo '<a class="button" href="/partner-dashboard/?partner=' . $post->ID . '" target="_blank">Open Dashboard</a>';
+}
 
 
 /**
