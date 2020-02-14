@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file. The format 
 ## [Unreleased]
 
 
+## [0.3.1] - 2020-02-14
+
+### [Fixed]
+- Fix undefined index errors.
+
+
 ## [0.3.0] - 2020-02-14
 
 ### [Added]
