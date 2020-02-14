@@ -40,7 +40,7 @@
 
 					<h1>Your Partner Dashboards</h1>
 
-					<div id="lpd-dashboard-list" class="cards">
+					<ul id="lpd-dashboard-list">
 
 						<?php
 
@@ -50,10 +50,7 @@
 
 							?>
 
-							<a class="card" href="?partner=<?php echo $partner_id; ?>">
-								<?php if ( has_post_thumbnail( $partner_id ) ) { echo '<div itemprop="image">' . get_the_post_thumbnail( $partner_id, 'thumbnail' ) . '</div>'; } ?>
-								<h2><?php echo $partner->post_title; ?></h2>
-							</a>
+							<li><a href="?partner=<?php echo $partner_id; ?>"><?php echo $partner->post_title; ?></a></li>
 
 							<?php
 
@@ -61,7 +58,7 @@
 
 						?>
 
-					</div>
+					</ul>
 
 					<?php
 

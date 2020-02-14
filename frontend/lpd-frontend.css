@@ -8,7 +8,6 @@ Dashboard Title
 
 /* Fonts */
 .partner-dashboard .card,
-.partner-dashboard #community-rating,
 .partner-dashboard #date-range,
 .partner-dashboard #lpd-authorized-users,
 .partner-dashboard #lpd-nav,
@@ -91,77 +90,30 @@ Dashboard Title
   margin-bottom: 0;
 }
 
-
-/* Partner Dashboard List */
-#lpd-dashboard-list .card {
-  display: grid;
-  grid-column-gap: 1.5rem;
-  grid-template-columns: 11rem 1fr;
-}
-
-#lpd-dashboard-list a.card:hover {
-  text-decoration: none;
-}
-
-#lpd-dashboard-list .card .wp-post-image {
-  align-self: center;
-  background-color: #ddd;
-  box-sizing: content-box;
-  display: block;
-  margin: 0;
-  padding: .5rem;
-  width: 10rem;
-}
-
-#lpd-dashboard-list .card h2 {
-  align-self: center;
-}
-
-#lpd-dashboard-list a.card:hover h2 {
-  color: #a00;
-}
-
 /* Dashboard Title */
 #lpd-title {
-    display: grid;
-    grid-column-gap: 1rem;
-    grid-template-columns: 10rem auto min-content;
-    grid-template-rows: 11rem;
-    margin-bottom: 3rem;
-    overflow: visible;
+  display: grid;
+  grid-column-gap: 1rem;
+  grid-template-columns: auto max-content;
+  grid-template-rows: 11rem;
+  margin-bottom: 3rem;
+  overflow: visible;
+}
+
+  #lpd-title .title-container {
+    align-self: center;
   }
 
-    #lpd-title div[itemprop="image"] {
-      background-color: #ddd;
-      border-radius: .2rem;
-      box-sizing: border-box;
-      height: 10rem;
-      margin: 0 1rem 0 0;
-      padding: .5rem;
-      width: 10rem;
+    #lpd-title .title {
+      margin-bottom: 0;
     }
 
-      #lpd-title img.wp-post-image {
-        height: 100%;
-        margin: auto 0;
-        max-width: none;
-        width: auto;
-      }
-
-    #lpd-title .title-container {
-      align-self: center;
+    #lpd-title .subtitle {
+      color: #777;
+      font-size: 1.8rem;
+      margin-bottom: 0;
+      text-transform: uppercase;
     }
-
-      #lpd-title .title {
-        margin-bottom: 0;
-      }
-
-      #lpd-title .subtitle {
-        color: #777;
-        font-size: 1.8rem;
-        margin-bottom: 0;
-        text-transform: uppercase;
-      }
 
 #lpd-nav {
   border-bottom: .1rem solid #ddd;
@@ -285,6 +237,7 @@ Dashboard Title
 .partner-dashboard .table-label {
   font-size: 1.8rem;
   margin-bottom: 1rem;
+  text-transform: uppercase;
 }
 
 table.affinity-claims {
