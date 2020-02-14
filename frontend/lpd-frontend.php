@@ -12,7 +12,7 @@ function lpd_body_class( $classes ) {
     $classes[] = 'partner-dashboard';
 	}
 
-	if ( isset( $_POST[ 'date_filter' ] ) ) {
+	if ( isset( $_GET[ 'date_filter' ] ) ) {
 		$classes[] = 'date_filtered';
 	}
 
@@ -69,16 +69,16 @@ function lpd_get_partners_by_user( $user_id ) {
 
 function lpd_dashboard( $partner_id ) {
 
-	$page						= null;
 	$partner				= get_post( $partner_id );
+	$page						= null;
 	$product_pages	= get_field( 'product_page', $partner_id ) ? get_field( 'product_page', $partner_id ) : null;
-	$date_filter		= null;
+	$date_filter		= 'this_month';
 
-	if ( isset( $_POST[ 'page' ] ) ) {
+	if ( isset( $_GET[ 'page' ] ) ) {
 		$page = sanitize_text_field( $_GET[ 'page' ] );
 	}
 
-	if ( isset( $_POST[ 'date_filter' ] ) ) {
+	if ( isset( $_GET[ 'date_filter' ] ) ) {
 		$date_filter = sanitize_text_field( $_GET[ 'date_filter' ] );
 	}
 

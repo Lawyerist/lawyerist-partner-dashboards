@@ -220,13 +220,22 @@ function lpd_get_pageviews( $page_path, $date_range ) {
 
 function lpd_get_results( $reports ) {
 
-  $report           = $reports[ 0 ];
-  $rows             = $report->getData()->getRows();
-  $row              = $rows[ 0 ];
-  $metrics          = $row->getMetrics();
-  $values           = $metrics[ 0 ]->getValues();
+  $report = $reports[ 0 ];
+  $rows   = $report->getData()->getRows();
+  $row    = $rows[ 0 ];
 
-  return $values[ 0 ];
+  if ( !is_null( $row ) ) {
+
+    $metrics  = $row->getMetrics();
+    $values   = $metrics[ 0 ]->getValues();
+
+    return $values[ 0 ];
+
+  } else {
+
+    return;
+    
+  }
 
 }
 

@@ -5,7 +5,7 @@ Plugin Name: Lawyerist Partner Dashboards
 Plugin URI: https://lawyerist.com
 Description: Performance dashboards for Lawyerist's advertising partners.
 Author: Sam Glover
-Version: 0.3.1
+Version: 0.3.2
 Author URI: https://lawyerist.com
 */
 
