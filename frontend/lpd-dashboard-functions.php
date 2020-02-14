@@ -53,7 +53,7 @@ function lpd_get_dashboard_title( $partner_id, $product_page_id, $partner_name )
 }
 
 
-function lpd_get_nav( $partner_id, $page ) {
+function lpd_get_nav( $product_page, $page ) {
 
   ob_start();
 
@@ -63,6 +63,7 @@ function lpd_get_nav( $partner_id, $page ) {
 
       <?php
 
+      $aff_total_claims = number_format( lpd_count_affinity_claims( $product_page->post_name, 'all' ) );
 
       switch ( $page ) {
 
@@ -71,7 +72,10 @@ function lpd_get_nav( $partner_id, $page ) {
           ?>
 
           <div class="tab active">Performance Report</div>
-          <a href="<?php echo add_query_arg( 'page', 'affinity_claims' ); ?>" class="tab">Affinity Claims Report</a>
+
+          <?php if ( $aff_total_claims > 0 ) { ?>
+            <a href="<?php echo add_query_arg( 'page', 'affinity_claims' ); ?>" class="tab">Affinity Claims Report</a>
+          <?php } ?>
 
           <?php
 
@@ -82,7 +86,10 @@ function lpd_get_nav( $partner_id, $page ) {
           ?>
 
           <a href="<?php echo remove_query_arg( 'page' ); ?>" class="tab">Performance Report</a>
-          <div class="tab active">Affinity Claims Report</div>
+
+          <?php if ( $aff_total_claims > 0 ) { ?>
+            <div class="tab active">Affinity Claims Report</div>
+          <?php } ?>
 
           <?php
 
@@ -203,7 +210,9 @@ function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_
           <div class="col">
             <div class="report-label">Affinity Benefit Claims</div>
             <div class="report-number"><?php echo $product_page_data[ 'aff_filtered_claims' ]; ?></div>
-            <div class="report-label-detail"><a href="<?php echo add_query_arg( 'page', 'affinity_claims' ); ?>">See All <?php echo $product_page_data[ 'aff_total_claims' ]; ?> Claims</a></div>
+            <?php if ( $product_page_data[ 'aff_total_claims' ] > 0 ) { ?>
+              <div class="report-label-detail"><a href="<?php echo add_query_arg( 'page', 'affinity_claims' ); ?>">See All <?php echo $product_page_data[ 'aff_total_claims' ]; ?> Claims</a></div>
+            <?php } ?>
           </div>
 
         </div>
@@ -311,6 +320,8 @@ function lpd_count_affinity_claims( $product_page_slug, $date_range ) {
   if ( is_plugin_active( 'gravityforms/gravityforms.php' ) ) :
 
     $form_id          = 55;
+
+    $search_criteria[ 'status' ] = 'active';
 
     $search_criteria[ 'field_filters' ][] = array(
       'key'       => 'source_url',

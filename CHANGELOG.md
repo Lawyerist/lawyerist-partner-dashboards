@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 - Add button to Partner to go straight to the dashboard for that partner.
+- Don't show Affinity Claims Report tab if there aren't any affinity claims.
+
 
 ## [0.2.0] - 2020-02-05
 
@@ -15,6 +17,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### [Fixed]
 - Fix some layout issues.
+
 
 ## [0.1.0] - 2020-02-05
 
