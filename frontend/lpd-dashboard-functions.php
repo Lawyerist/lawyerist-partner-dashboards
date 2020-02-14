@@ -3,7 +3,7 @@
 /**
 * Gets the dashboard title block.
 */
-function lpd_get_dashboard_title( $partner_id, $product_page_id, $partner_name ) {
+function lpd_get_dashboard_title( $partner_name ) {
 
   ob_start();
 
@@ -16,34 +16,6 @@ function lpd_get_dashboard_title( $partner_id, $product_page_id, $partner_name )
         <p class="subtitle">Partner Dashboard</p>
       </div>
 
-      <?php if ( $product_page_id ) { ?>
-
-        <div id="community-rating">
-
-          <?php
-
-          $our_rating             = lawyerist_get_our_rating( $product_page_id );
-          $rating                 = lawyerist_get_composite_rating( $product_page_id );
-          $community_review_count = lawyerist_get_community_review_count( $product_page_id );
-
-          if ( !empty( $our_rating ) ) {
-            $rating_count = $community_review_count + 1;
-          } else {
-            $rating_count = $community_review_count;
-          }
-
-          ?>
-
-          <div class="card">
-            <div class="report-label">Product Rating</div>
-            <div class="report-number"><?php echo $rating; ?><span style="color: #777;">/5</span></div>
-            <div class="report-label-detail"><?php echo lawyerist_star_rating ( $rating ) . '<a href="' . get_permalink( $product_page_id ); ?>#rating">(<?php echo $rating_count . ' ' . _n( 'rating', 'ratings', $rating_count ) . '</a>'; ?>)</div>
-          </div>
-
-        </div>
-
-      <?php } ?>
-
     </div>
 
     <?php
@@ -53,7 +25,7 @@ function lpd_get_dashboard_title( $partner_id, $product_page_id, $partner_name )
 }
 
 
-function lpd_get_nav( $product_page, $page ) {
+function lpd_get_nav( $product_page_ids, $page ) {
 
   ob_start();
 
@@ -63,7 +35,25 @@ function lpd_get_nav( $product_page, $page ) {
 
       <?php
 
-      $aff_total_claims = number_format( lpd_count_affinity_claims( $product_page->post_name, 'all' ) );
+      if ( gettype( $product_page_ids ) == 'integer' ) {
+
+				$product_page	= get_post( $product_page_ids );
+
+        $aff_total_claims = number_format( lpd_count_affinity_claims( $product_page->post_name, 'all' ) );
+
+			} else {
+
+        $aff_total_claims = 0;
+
+				foreach ( $product_page_ids as $product_page_id ) {
+
+					$product_page	= get_post( $product_page_id );
+
+          $aff_total_claims += number_format( lpd_count_affinity_claims( $product_page->post_name, 'all' ) );
+
+				}
+
+			}
 
       switch ( $page ) {
 
@@ -106,7 +96,7 @@ function lpd_get_nav( $product_page, $page ) {
 }
 
 
-function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_filter ) {
+function lpd_get_product_page_performance_report( $partner_id, $product_page, $portal, $date_filter ) {
 
   $portal_path          = $portal ? parse_url( get_permalink( $portal->ID ), PHP_URL_PATH ) : null;
   $product_page_path    = $product_page ? parse_url( get_permalink( $product_page->ID ), PHP_URL_PATH ) : null;
@@ -169,53 +159,39 @@ function lpd_get_performance_report( $partner_id, $product_page, $portal, $date_
 
     ?>
 
-    <div id="lpd-performance-report">
+    <div class="card">
+      <div class="card-label"><?php echo $product_page->post_title; ?></div>
 
-      <p class="nodata-message">If you are not seeing data below, it probably means you do not have that ad product for that time period. Get the <a href="https://lawyerist.com/ad-info" target="_blank">media kit</a> to see what you are missing, or email <a href="mailto:partnerships@lawyerist.com">partnerships@lawyerist.com</a> to expand your campaign.</p>
+      <div class="cols-4" class="lpd-product-page-report">
 
-      <p class="card-label">Date Range</p>
-      <div id="date-range">
-        <a id="this-month-filter" href="<?php echo add_query_arg( 'date_filter', 'this_month' ); ?>">This Month</a>
-        <a id="last-month-filter" href="<?php echo add_query_arg( 'date_filter', 'last_month' ); ?>">Last Month</a>
-        <a id="this-year-filter" href="<?php echo add_query_arg( 'date_filter', 'this_year' ); ?>">This Year</a>
-        <a id="last-year-filter" href="<?php echo add_query_arg( 'date_filter', 'last_year' ); ?>">Last Year</a>
-        <div class="clear"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-label">Product Page</div>
-
-        <div class="cols-4" id="lpd-product-page-report">
-
-          <div class="col">
-            <div class="report-label">Product Portal Views</div>
-            <div class="report-number"><?php echo $product_page_data[ 'portal_views' ]; ?></div>
-            <div class="report-label-detail"><a href="<?php echo get_permalink( $portal->ID ); ?>"><?php echo $portal->post_title; ?></a></div>
-          </div>
-
-          <div class="col">
-            <div class="report-label">Product Page Views</div>
-            <div class="report-number"><?php echo $product_page_data[ 'product_page_views' ]; ?></div>
-            <div class="report-label-detail"><a href="<?php echo get_permalink( $product_page->ID ); ?>"><?php echo $product_page->post_title; ?></a></div>
-          </div>
-
-          <div class="col">
-            <div class="report-label">Trial Button Leads</div>
-            <div class="report-number"><?php echo $product_page_data[ 'tb_unique_clicks' ]; ?></div>
-            <?php if ( $product_page_data[ 'tb_total_clicks' ] > 0 ) { ?>
-              <div class="report-label-detail"><?php echo $product_page_data[ 'tb_total_clicks' ]; ?> Total Clicks</div>
-            <?php } ?>
-          </div>
-
-          <div class="col">
-            <div class="report-label">Affinity Benefit Claims</div>
-            <div class="report-number"><?php echo $product_page_data[ 'aff_filtered_claims' ]; ?></div>
-            <?php if ( $product_page_data[ 'aff_total_claims' ] > 0 ) { ?>
-              <div class="report-label-detail"><a href="<?php echo add_query_arg( 'page', 'affinity_claims' ); ?>">See All <?php echo $product_page_data[ 'aff_total_claims' ]; ?> Claims</a></div>
-            <?php } ?>
-          </div>
-
+        <div class="col">
+          <div class="report-label">Product Portal Views</div>
+          <div class="report-number"><?php echo $product_page_data[ 'portal_views' ]; ?></div>
+          <div class="report-label-detail"><a href="<?php echo get_permalink( $portal->ID ); ?>"><?php echo $portal->post_title; ?></a></div>
         </div>
+
+        <div class="col">
+          <div class="report-label">Product Page Views</div>
+          <div class="report-number"><?php echo $product_page_data[ 'product_page_views' ]; ?></div>
+          <div class="report-label-detail"><a href="<?php echo get_permalink( $product_page->ID ); ?>"><?php echo $product_page->post_title; ?></a></div>
+        </div>
+
+        <div class="col">
+          <div class="report-label">Trial Button Leads</div>
+          <div class="report-number"><?php echo $product_page_data[ 'tb_unique_clicks' ]; ?></div>
+          <?php if ( $product_page_data[ 'tb_total_clicks' ] > 0 ) { ?>
+            <div class="report-label-detail"><?php echo $product_page_data[ 'tb_total_clicks' ]; ?> Total Clicks</div>
+          <?php } ?>
+        </div>
+
+        <div class="col">
+          <div class="report-label">Affinity Benefit Claims</div>
+          <div class="report-number"><?php echo $product_page_data[ 'aff_filtered_claims' ]; ?></div>
+          <?php if ( $product_page_data[ 'aff_total_claims' ] > 0 ) { ?>
+            <div class="report-label-detail"><a href="<?php echo add_query_arg( 'page', 'affinity_claims' ); ?>">See All <?php echo $product_page_data[ 'aff_total_claims' ]; ?> Claims</a></div>
+          <?php } ?>
+        </div>
+
       </div>
     </div>
 
@@ -352,24 +328,45 @@ function lpd_count_affinity_claims( $product_page_slug, $date_range ) {
 /**
 * Gets affinity benefit claims.
 */
-function lpd_get_affinity_claims( $product_page_slug ) {
+function lpd_get_affinity_claims( $product_page_ids ) {
 
   if ( !is_plugin_active( 'gravityforms/gravityforms.php' ) ) { return; }
 
-  $form_id            = 55;
+  $form_id = 55;
 
-  $search_criteria[ 'field_filters' ][] = array(
-    'key'       => 'source_url',
-    'value'     => $product_page_slug,
-    'operator'  => 'contains',
-  );
+  if ( gettype( $product_page_ids ) == 'integer' ) {
 
-  $sorting            = array();
+    $product_page       = get_post( $product_page_ids );
+
+    $search_criteria[ 'field_filters' ][] = array(
+      'key'       => 'source_url',
+      'value'     => $product_page->post_name,
+      'operator'  => 'contains',
+    );
+
+  } else {
+
+    $search_criteria[ 'field_filters' ][ 'mode' ] = 'any';
+
+    foreach ( $product_page_ids as $product_page_id ) {
+
+      $product_page         = get_post( $product_page_id );
+
+      $search_criteria[ 'field_filters' ][] = array(
+        'key'       => 'source_url',
+        'value'     => $product_page->post_name,
+        'operator'  => 'contains',
+      );
+
+    }
+
+  }
+
   $paging             = array( 'offset' => 0, 'page_size' => 200 );
   $all_claims         = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging );
 
   // Creates arrays of claims for this product, sorted by status.
-  $in_progresss       = array();
+  $in_progress        = array();
   $existing_customers = array();
   $closed_won         = array();
   $closed_lost        = array();
@@ -400,7 +397,7 @@ function lpd_get_affinity_claims( $product_page_slug ) {
 
       case 'In Progress' :
       case null :
-        $in_progresss[] = $claim;
+        $in_progress[] = $claim;
         break;
 
     }
@@ -413,12 +410,12 @@ function lpd_get_affinity_claims( $product_page_slug ) {
 
     <?php
 
-    if ( count( $in_progresss ) > 0 ) {
+    if ( count( $in_progress ) > 0 ) {
 
       ?>
 
       <div class="table-label">In Progress</div>
-      <?php echo lpd_get_affinity_claim_table( $in_progresss ); ?>
+      <?php echo lpd_get_affinity_claim_table( $in_progress ); ?>
 
       <?php
 
@@ -502,9 +499,8 @@ function lpd_get_affinity_claim_table( $claims ) {
           <tr>
             <th>Claim ID</th>
             <th>Date</th>
-            <th>Name</th>
-            <th>Email Address</th>
-            <th>Phone Number</th>
+            <th>Customer</th>
+            <th>Product</th>
             <th>Claim Status</th>
           </tr>
         </thead>
@@ -521,9 +517,12 @@ function lpd_get_affinity_claim_table( $claims ) {
             <tr>
               <td><?php echo $claim[ 'id' ]; ?></td>
               <td><?php echo date( 'Y-m-d', strtotime( $claim[ 'date_created' ] ) ); ?></td>
-              <td><?php echo $claim[ '1.3' ] . ' ' . $claim[ '1.6' ]; ?></td>
-              <td><?php echo $claim[ 2 ]; ?></td>
-              <td><?php echo $claim[ 5 ]; ?></td>
+              <td>
+                <?php echo $claim[ '1.3' ] . ' ' . $claim[ '1.6' ]; ?><br />
+                <small><?php echo $claim[ 2 ]; ?></small><br />
+                <small><?php echo $claim[ 5 ]; ?></small>
+              </td>
+              <td><?php echo $claim[ 3 ]; ?></td>
               <td class="claim_status">
                 <label class="hidden" for="<?php echo $select_name; ?>-select">Update claim <?php echo $claim[ 'id' ]; ?> status.</label>
                 <select name="<?php echo $select_name; ?>" id="<?php echo $select_name; ?>-select">

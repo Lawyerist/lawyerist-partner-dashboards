@@ -8,7 +8,6 @@ Dashboard Title
 
 /* Fonts */
 .partner-dashboard .card,
-.partner-dashboard #community-rating,
 .partner-dashboard #date-range,
 .partner-dashboard #lpd-authorized-users,
 .partner-dashboard #lpd-nav,
@@ -238,6 +237,7 @@ Dashboard Title
 .partner-dashboard .table-label {
   font-size: 1.8rem;
   margin-bottom: 1rem;
+  text-transform: uppercase;
 }
 
 table.affinity-claims {

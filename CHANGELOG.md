@@ -3,7 +3,15 @@
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+
+## [0.3.0] - 2020-02-14
+
+### [Added]
 - Add button to Partner to go straight to the dashboard for that partner.
+- Allow a Partner to be associated with multiple product pages.
+
+### [Changed]
 - Don't show Affinity Claims Report tab if there aren't any affinity claims.
 
 
