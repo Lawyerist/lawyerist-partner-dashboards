@@ -39,7 +39,7 @@ function lpd_get_nav( $product_page_ids, $page ) {
 
 				$product_page	= get_post( $product_page_ids );
 
-        $aff_total_claims = number_format( lpd_count_affinity_claims( $product_page->post_name, 'all' ) );
+        $aff_total_claims = lpd_count_affinity_claims( $product_page->post_name, 'all' );
 
 			} else {
 
@@ -49,7 +49,7 @@ function lpd_get_nav( $product_page_ids, $page ) {
 
 					$product_page	= get_post( $product_page_id );
 
-          $aff_total_claims += number_format( lpd_count_affinity_claims( $product_page->post_name, 'all' ) );
+          $aff_total_claims += lpd_count_affinity_claims( $product_page->post_name, 'all' );
 
 				}
 
@@ -98,8 +98,8 @@ function lpd_get_nav( $product_page_ids, $page ) {
 
 function lpd_get_product_page_performance_report( $partner_id, $product_page, $portal, $date_filter ) {
 
-  $portal_path          = $portal ? parse_url( get_permalink( $portal->ID ), PHP_URL_PATH ) : null;
-  $product_page_path    = $product_page ? parse_url( get_permalink( $product_page->ID ), PHP_URL_PATH ) : null;
+  $portal_path          = $portal ? esc_url( parse_url( get_permalink( $portal->ID ), PHP_URL_PATH ) ) : null;
+  $product_page_path    = $product_page ? esc_url( parse_url( get_permalink( $product_page->ID ), PHP_URL_PATH ) ) : null;
 
   switch ( $date_filter ) {
 
@@ -139,18 +139,20 @@ function lpd_get_product_page_performance_report( $partner_id, $product_page, $p
   }
 
   $product_page_data  = array(
-    'portal_views'        => $portal_path ? number_format( lpd_get_pageviews( $portal_path, $date_range ) ) : null,
-    'product_page_views'  => $product_page_path ? number_format( lpd_get_pageviews( $product_page_path, $date_range ) ) : null,
-    'tb_unique_clicks'    => has_trial_button( $product_page ) ? number_format( trial_button_click_count( $product_page->ID, $date_filter, true ) ) : null,
-    'tb_total_clicks'     => has_trial_button( $product_page ) ? number_format( trial_button_click_count( $product_page->ID, $date_filter, false ) ) : null,
-    'aff_filtered_claims' => number_format( lpd_count_affinity_claims( $product_page->post_name, $date_range ) ),
-    'aff_total_claims'    => number_format( lpd_count_affinity_claims( $product_page->post_name, 'all' ) ),
+    'portal_views'        => $portal_path ? lpd_get_pageviews( $portal_path, $date_range ) : null,
+    'product_page_views'  => $product_page_path ? lpd_get_pageviews( $product_page_path, $date_range ) : null,
+    'tb_unique_clicks'    => has_trial_button( $product_page ) ? trial_button_click_count( $product_page->ID, $date_filter, true ) : null,
+    'tb_total_clicks'     => has_trial_button( $product_page ) ? trial_button_click_count( $product_page->ID, $date_filter, false ) : null,
+    'aff_filtered_claims' => lpd_count_affinity_claims( $product_page->post_name, $date_range ),
+    'aff_total_claims'    => lpd_count_affinity_claims( $product_page->post_name, 'all' ),
   );
 
   foreach ( $product_page_data as $key => $value ) {
 
     if ( is_null( $value ) || empty( $value ) || $value == 0 ) {
-      $product_page_data[ $key ] = '-';
+      $product_page_data[ $key ] = '&ndash;';
+    } else {
+      $product_page_data[ $key ] = number_format( $value );
     }
 
   }
@@ -207,12 +209,14 @@ function lpd_get_product_page_performance_report( $partner_id, $product_page, $p
 */
 function lpd_get_pageviews( $page_path, $date_range ) {
 
-  $analytics = initializeAnalytics();
-  $response = getReport( $analytics, $page_path, $date_range );
+  $analytics  = initializeAnalytics();
+  $response   = getReport( $analytics, $page_path, $date_range );
+  $results    = lpd_get_results( $response );
 
-  return lpd_get_results( $response );
+  return $results;
 
 }
+
 
 function lpd_get_results( $reports ) {
 
@@ -225,6 +229,7 @@ function lpd_get_results( $reports ) {
   return $values[ 0 ];
 
 }
+
 
 /**
  * Initializes an Analytics Reporting API V4 service object.
@@ -295,9 +300,7 @@ function lpd_count_affinity_claims( $product_page_slug, $date_range ) {
 
   if ( is_plugin_active( 'gravityforms/gravityforms.php' ) ) :
 
-    $form_id          = 55;
-
-    $search_criteria[ 'status' ] = 'active';
+    $form_id = 55;
 
     $search_criteria[ 'field_filters' ][] = array(
       'key'       => 'source_url',
