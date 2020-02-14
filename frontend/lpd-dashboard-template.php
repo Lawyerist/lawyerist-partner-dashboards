@@ -10,7 +10,10 @@
 
 		if ( is_user_logged_in() ) {
 
-			$partner_id = sanitize_text_field( $_GET[ 'partner' ] );
+			if ( isset( $_GET[ 'partner' ] ) ) {
+				$partner_id = $_GET[ 'partner' ];
+			}
+
 			$user_id		= get_current_user_ID();
 			$dashboards	= lpd_get_partners_by_user( $user_id ); // Returns an array.
 
