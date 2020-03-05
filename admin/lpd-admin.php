@@ -3,22 +3,22 @@
 /**
 * Adds an options page.
 */
-function my_acf_op_init() {
+function lpd_acf_op_init() {
 
   // Check function exists.
   if( function_exists( 'acf_add_options_sub_page' ) ) {
 
-    acf_add_options_sub_page(array(
+    acf_add_options_sub_page( array(
       'page_title'  => __( 'Partner Settings' ),
       'menu_title'  => __( 'Settings' ),
       'parent_slug' => __( 'edit.php?post_type=partner' ),
-    ));
+    ) );
 
   }
 
 }
 
-add_action( 'acf/init', 'my_acf_op_init' );
+add_action( 'acf/init', 'lpd_acf_op_init' );
 
 
 /**
