@@ -234,7 +234,7 @@ function lpd_get_results( $reports ) {
   } else {
 
     return;
-    
+
   }
 
 }
@@ -348,7 +348,7 @@ function lpd_get_affinity_claims( $product_page_ids ) {
 
   if ( gettype( $product_page_ids ) == 'integer' ) {
 
-    $product_page       = get_post( $product_page_ids );
+    $product_page = get_post( $product_page_ids );
 
     $search_criteria[ 'field_filters' ][] = array(
       'key'       => 'source_url',
