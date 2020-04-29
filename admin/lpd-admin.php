@@ -22,7 +22,7 @@ add_action( 'acf/init', 'lpd_acf_op_init' );
 
 
 /**
-* Cleans up the new/edit partner page.
+* Cleans up the new/edit partner page and adds a meta box for the dashboard link.
 */
 function lpd_meta_boxes() {
 
@@ -55,6 +55,9 @@ function lpd_meta_boxes() {
 add_action( 'do_meta_boxes', 'lpd_meta_boxes' );
 
 
+/**
+* Adds an Open Dashboard link to all partners.
+*/
 function lpd_partner_dashboard_link( $post ) {
   echo '<a class="button" href="/partner-dashboard/?partner=' . $post->ID . '" target="_blank">Open Dashboard</a>';
 }
