@@ -25,6 +25,10 @@ function lpd_get_dashboard_title( $partner_name ) {
 }
 
 
+/**
+* Gets the main navigataion tabs (currently Partner Dashboards and Affinity Claims
+* Report, if the partner has any claims).
+*/
 function lpd_get_nav( $product_page_ids, $page ) {
 
   ob_start();
@@ -96,6 +100,13 @@ function lpd_get_nav( $product_page_ids, $page ) {
 }
 
 
+/**
+* Gets the product page performance report.
+*
+* This functions pulls data from Google Analytics, which requires the Google API
+* files and key. (Not included in the Github repo for hopefully obvious
+* reasons.)
+*/
 function lpd_get_product_page_performance_report( $partner_id, $product_page, $portal, $date_filter ) {
 
   $portal_path          = $portal ? esc_url( parse_url( get_permalink( $portal->ID ), PHP_URL_PATH ) ) : null;
@@ -234,7 +245,7 @@ function lpd_get_results( $reports ) {
   } else {
 
     return;
-    
+
   }
 
 }
@@ -348,7 +359,7 @@ function lpd_get_affinity_claims( $product_page_ids ) {
 
   if ( gettype( $product_page_ids ) == 'integer' ) {
 
-    $product_page       = get_post( $product_page_ids );
+    $product_page = get_post( $product_page_ids );
 
     $search_criteria[ 'field_filters' ][] = array(
       'key'       => 'source_url',
@@ -493,6 +504,9 @@ function lpd_get_affinity_claims( $product_page_ids ) {
 }
 
 
+/**
+* Builds the table of affinity claims.
+*/
 function lpd_get_affinity_claim_table( $claims ) {
 
   if ( empty( $claims ) ) { return; }

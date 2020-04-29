@@ -1,10 +1,19 @@
 <?php
 
+/**
+* This is the main frontend file, but most of the required functions live in
+* lpd-dashboard-functions.php.
+*/
+
 require_once( plugin_dir_path( __FILE__ ) . 'lpd-dashboard-functions.php' );
 
 
 /**
-* Adds .partner-dashboard to <body>.
+* Adds classes to <body>.
+* .partner-dashboard when the partner dashboard is being displayed.
+* .date_filtered when one of the date filters is being shown, so the filter tab
+* colors can be set.
+* Also, classes for any other URL variables that are set, just in case.
 */
 function lpd_body_class( $classes ) {
 
@@ -28,7 +37,8 @@ add_filter( 'body_class', 'lpd_body_class' );
 
 
 /**
-* Selects the partner dashboard single post template.
+* Selects the partner dashboard single post template if the dashboard is being
+* viewed.
 */
 function lpd_template( $template ) {
 
@@ -43,6 +53,10 @@ function lpd_template( $template ) {
 add_filter( 'template_include', 'lpd_template' );
 
 
+/**
+* For the given user, finds all partners for which they are authorized to view
+* the partner dashboard.
+*/
 function lpd_get_partners_by_user( $user_id ) {
 
 	if ( !$user_id ) {
@@ -67,6 +81,10 @@ function lpd_get_partners_by_user( $user_id ) {
 }
 
 
+/**
+* Gets the given partner's dashboard. (Uses lots of functions from
+* lpd-dashboard-functions.php.)
+*/
 function lpd_dashboard( $partner_id ) {
 
 	$partner				= get_post( $partner_id );
